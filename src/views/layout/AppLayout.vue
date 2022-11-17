@@ -53,6 +53,9 @@ export default {
     window.onresize = () => {
       this.windowWidth = window.innerWidth;
     };
+
+
+
   },
   methods: {
     onMenuToggle() {

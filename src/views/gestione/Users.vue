@@ -16,9 +16,20 @@
           <TableSkeleton></TableSkeleton>
         </div>
         <DataTable v-else :value="data" :stripedRows="true" :paginator="true" :rows="10" :resizableColumns="true"
-          :scrollable="true" table-layout="auto" ref="dt">
+          :globalFilterFields="['nome', 'cognome', 'luogonascita', 'email', 'telefono', 'username', 'cellulare']"
+          v-model:filters="filters1" filterDisplay="menu" :scrollable="true" table-layout="auto" ref="dt">
+          <template #header>
+            <div class="flex justify-content-between">
+              <Button type="button" icon="pi pi-filter-slash" label="Pulisci i Filtri" class="p-button-outlined"
+                @click="clearFilter1()" />
+              <span class="p-input-icon-left">
+                <i class="pi pi-search" />
+                <InputText v-model="filters1['global'].value" placeholder="Cerca..." />
+              </span>
+            </div>
+          </template>
           <Column field="imgprofilo">
-            <template #body="{data}">
+            <template #body="{ data }">
               <Avatar v-if="data.imgprofilo" :image="data.imgprofilo" class="mr-2" size="xlarge" />
               <Avatar v-else :label="data.nome.charAt(0) + data.cognome.charAt(0)" class="mr-2" size="xlarge" />
             </template>
@@ -27,20 +38,24 @@
             <template #body="{ data }">
               {{ data.nome }} {{ data.cognome }}
             </template>
+
           </Column>
           <Column field="email" header="Email">
-            <template #body="{data}">
+            <template #body="{ data }">
               {{ data.email }}
             </template>
+
           </Column>
           <Column field="luogonascita" header="Luogo">
-            <template #body="{data}">
+            <template #body="{ data }">
               {{ data.luogonascita }}
             </template>
+
           </Column>
           <Column field="attivo" header="Attivo">
-            <template #body="{data}">
-              <i class="pi pi-fw pi-check"></i>
+            <template #body="{ data }">
+              <i v-if="data.attivo" class="pi pi-fw pi-check"></i>
+              <i v-else class="pi pi-fw pi-times"></i>
             </template>
           </Column>
           <Column header="Azioni" style="max-width: 200px">
@@ -74,6 +89,8 @@ import { useToast } from 'primevue/usetoast'
 import AxiosService from '@/axiosServices/AxiosService';
 import TableSkeleton from '@/components/skeletons/TableSkeleton.vue';
 import UsersSidebar from '@/components/sidebars/UsersSidebar.vue';
+
+import { FilterMatchMode } from 'primevue/api';
 
 const store = useStore()
 function setContentLoading_true() {
@@ -167,6 +184,22 @@ function deleteStato(element) {
       getViewData()
     })
 }
+
+
+// DATATABLE AND FILTERS SETTINFG
+const filters1 = ref({
+  'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
+})
+
+function clearFilter1() {
+  initFilters1()
+}
+function initFilters1() {
+  filters1.value = {
+    'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
+  }
+}
+
 
 getViewData()
 </script>

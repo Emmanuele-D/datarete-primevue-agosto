@@ -1,12 +1,11 @@
 <template>
   <div class="wrapper">
-    <h1>{{
-    pageTitle
-    }}</h1>
-    <TableBuilder @event_ShowSidebar_eye="$router.push('/crm')" @event_ShowSidebar_modifica=" null"
-      @event_ShowSidebar_nuovoAppuntamento="$router.push('/eventi')" @event_ShowSidebar_creaPratica="null"
-      @event_ShowSidebar_elimina="null" @event_Menubar_Inserisci="showSidebarEventi" :data="tableItems"
-      :headersConfig="columns" :config="config">
+    <h1>Anagrafiche Lead</h1>
+    <TableBuilder @event_ShowSidebar_eye="$router.push('/crm')" @event_ShowSidebar_edit="showEditAnagrafica"
+      @event_ShowSidebar_modifica=" null" @event_ShowSidebar_nuovoAppuntamento="$router.push('/eventi')"
+      @event_ShowSidebar_creaPratica="null" @event_ShowSidebar_elimina="null"
+      @event_Menubar_Inserisci="showSidebarEventi" :data="tableItems" :headersConfig="columns" :config="config"
+      :showAzioni="true">
     </TableBuilder>
     <Sidebar v-model:visible="sidebarClientiVisible" :baseZIndex="10000" position="right" class="p-sidebar-md">
       <SidebarClienti :sidebarData="sidebarClientiData">
@@ -77,7 +76,36 @@ function showSidebarClienti(event) {
 }
 
 
+function showEditAnagrafica(event) {
+  console.log("🚀 ~ file: Lead.vue ~ line 82 ~ showEditAnagrafica ~ event", event)
 
+  const eventMapped = {}
+
+  eventMapped.id = event.ID
+  eventMapped.nome = event.NOME
+  eventMapped.cognome = event.COGNOME
+  eventMapped.email = event.EMAIL
+  eventMapped.codiceFiscale = event.CODICE_FISCALE
+  eventMapped.id_sesso = event.SESSO
+  eventMapped.dataNascita = event.NASCITA_DATA
+  eventMapped.cittadinanza = event.CITTADINANZA
+  eventMapped.idNazioneNascita = event.NACITA_NAZIONE_ID
+  eventMapped.idRegioneNascita = event.NASCITA_REGIONE_ID
+  eventMapped.idProvinciaNascita = event.NACITA_PROVINCIA_ID
+  eventMapped.idCittaNascita = event.NACITA_CITTA_ID
+  eventMapped.idStatoCivile = event.STATO_CIVILE
+  eventMapped.idTipoOccupazione = event.TIPO_OCCUPAZIONE
+  eventMapped.professione = event.PROFESSIONE
+  eventMapped.dataAssunzione = event.DATA_ASSUNZIONE
+  eventMapped.dataScadenzaContratto = event.DATA_SCADENZA_CONTRATTO
+  eventMapped.contrattoIndeterminato = event.CONTRATTO_INDETERMINATO
+  eventMapped.nomeAzienda = event.DENOMINAZIONE_AZIENDA
+  eventMapped.personaPoliticamenteEsposta = event.POLITICAMENTE_ESPOSTO
+  eventMapped.guidatoreAbituale = event.GUIDATORE_ABITUALE
+
+  nuovaAnagraficaVisible.value = true
+  nuovaAnagraficaData.value = eventMapped
+}
 
 
 // TABLE BUILDER
@@ -116,7 +144,6 @@ const config = ref({
   ]
 })
 
-let pageTitle = ref('')
 // // get viste
 const viste = ref([])
 async function getViews() {
@@ -126,7 +153,7 @@ async function getViews() {
     .then(res => {
       if (res) {
         console.log("🚀 ~ file: Lead.vue ~ line 140 ~ getViews ~ res", res)
-        pageTitle.value = res.nome
+
         res.visualizzazioni.forEach(element => {
           viste.value.push(element)
 
@@ -184,6 +211,7 @@ function getTableItems() {
   })
     .then(res => {
       if (res) {
+        console.log("🚀 ~ file: Lead.vue ~ line 192 ~ getTableItems ~ res", res)
         res.data.forEach(element => {
           dateColumns.forEach(keyDate => {
             if (element[keyDate]) {

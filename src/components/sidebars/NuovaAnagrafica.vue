@@ -13,46 +13,51 @@
 
           <div class="flex flex-column col-12 col-lg-6">
             <label for="first-name">Nome</label>
-            <InputText id="first-name" type="text" v-model="anagraficaClienti.NOME" />
+            <InputText id="first-name" type="text" v-model="anagraficaClienti.nome" />
           </div>
           <div class="flex flex-column col-12 col-lg-6">
             <label for="last-name">Cognome</label>
-            <InputText id="last-name" type="text" v-model="anagraficaClienti.COGNOME" />
+            <InputText id="last-name" type="text" v-model="anagraficaClienti.cognome" />
           </div>
           <div class="flex flex-column col-12 col-lg-6">
             <label for="email">Email</label>
-            <InputText id="email" type="email" v-model="anagraficaClienti.EMAIL" />
+            <InputText id="email" type="email" v-model="anagraficaClienti.email" />
           </div>
           <div class="flex flex-column col-12 col-lg-6">
             <label for="codice-fiscale">Codice Fiscale</label>
-            <InputText id="codice-fiscale" type="text" v-model="anagraficaClienti.CODICE_FISCALE" />
+            <InputText id="codice-fiscale" type="text" v-model="anagraficaClienti.codiceFiscale" />
           </div>
           <div class="flex flex-column col-12 col-lg-4">
             <label for="sex">Sesso</label>
-            <Dropdown id="sex" :showClear="true" :options="options.sex" v-model="anagraficaClienti.ID_SESSO"
+            <Dropdown id="sex" :showClear="true" :options="options.sex" v-model="anagraficaClienti.idSesso"
               optionValue="value" optionLabel="text" placeholder="Seleziona un'opzione"></Dropdown>
           </div>
           <div class="flex flex-column col-12 col-lg-4">
             <label for="birth-date">Data di nascita</label>
-            <Calendar id="birth-date" v-model="anagraficaClienti.NASCITA_DATA" dateFormat="dd-mm-yy" />
+            <Calendar id="birth-date" v-model="anagraficaClienti.dataNascita" dateFormat="dd-mm-yy" />
           </div>
           <div class="flex flex-column col-12 col-lg-4">
             <label for="citizenship">Cittadinanza</label>
-            <InputText id="citizenship" type="text" v-model="anagraficaClienti.CITTADINANZA" />
+            <InputText id="citizenship" type="text" v-model="anagraficaClienti.cittadinanza" />
           </div>
-          <div class="flex flex-column col-12 col-lg-3">
+
+          <ChooserGeography :nazioneSelected="anagraficaClienti.idNazioneNascita"
+            :regioneSelected="anagraficaClienti.idRegioneNascita"
+            :provinciaSelected="anagraficaClienti.idProvinciaNascita" :cittaSelected="anagraficaClienti.idCittaNascita"
+            @event_geoFilter="populateTempItemFromGeoFilter($event, anagraficaClienti)"></ChooserGeography>
+          <!-- <div class="flex flex-column col-12 col-lg-3">
             <label for="birth-nation">Nazione Nascita</label>
             <Dropdown id="birth-nation" :showClear="true" :options="options.birthNation" optionLabel="nome"
-              optionValue="id" placeholder="Seleziona un'opzione" v-model="anagraficaClienti.NASCITA_NAZIONE_ID"
-              @change="getRegions(anagraficaClienti.NASCITA_NAZIONE_ID)"></Dropdown>
+              optionValue="id" placeholder="Seleziona un'opzione" v-model="anagraficaClienti.idNazioneNascita"
+              @change="getRegions(anagraficaClienti.idNazioneNascita)"></Dropdown>
           </div>
           <div class="flex flex-column col-12 col-lg-3">
             <label for="birth-region">Regione Nascita</label>
             <Dropdown id="birth-nation" :showClear="true" :options="options.birthRegion" optionLabel="nome"
               optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
               emptyMessage="Seleziona prima una nazione..." placeholder="Seleziona un'opzione"
-              v-model="anagraficaClienti.NASCITA_REGIONE_ID"
-              @change="getProvinces(anagraficaClienti.NASCITA_REGIONE_ID)" :filter="true">
+              v-model="anagraficaClienti.idRegioneNascita" @change="getProvinces(anagraficaClienti.idRegioneNascita)"
+              :filter="true">
             </Dropdown>
           </div>
           <div class="flex flex-column col-12 col-lg-3">
@@ -60,56 +65,56 @@
             <Dropdown id="birth-province" :showClear="true" :options="options.birthProvince" optionLabel="nome"
               optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
               emptyMessage="Seleziona prima una regione..." placeholder="Seleziona un'opzione"
-              v-model="anagraficaClienti.NASCITA_PROVINCIA_ID"
-              @change="getCities(anagraficaClienti.NASCITA_PROVINCIA_ID)" :filter="true">
+              v-model="anagraficaClienti.idProvinciaNascita" @change="getCities(anagraficaClienti.idProvinciaNascita)"
+              :filter="true">
             </Dropdown>
           </div>
           <div class="flex flex-column col-12 col-lg-3">
             <label for="birth-city">Città Nascita</label>
             <Dropdown id="birth-city" :showClear="true" :options="options.birthCity" optionLabel="nome" optionValue="id"
               emptyFilterMessage="Nessuna corrispondenza trovata" emptyMessage="Seleziona prima una provincia..."
-              placeholder="Seleziona un'opzione" v-model="anagraficaClienti.NASCITA_CITTA_ID" :filter="true"></Dropdown>
-          </div>
+              placeholder="Seleziona un'opzione" v-model="anagraficaClienti.idCittaNascita" :filter="true"></Dropdown>
+          </div> -->
           <div class="flex flex-column col-12 col-lg-4">
             <label for="marital-status">Stato Civile</label>
             <Dropdown id="marital-status" :showClear="true" :options="options.maritalStatus" optionLabel="text"
-              optionValue="value" placeholder="Seleziona un'opzione" v-model="anagraficaClienti.ID_STATO_CIVILE">
+              optionValue="value" placeholder="Seleziona un'opzione" v-model="anagraficaClienti.idStatoCivile">
             </Dropdown>
           </div>
           <div class="flex flex-column col-12 col-lg-4">
             <label for="job-activity-type">Tipo Occupazione</label>
             <Dropdown id="job-activity-type" :showClear="true" :options="options.jobActivityType" optionLabel="text"
-              optionValue="value" placeholder="Seleziona un'opzione" v-model="anagraficaClienti.ID_TIPO_OCCUPAZIONE">
+              optionValue="value" placeholder="Seleziona un'opzione" v-model="anagraficaClienti.idTipoOccupazione">
             </Dropdown>
           </div>
           <div class="flex flex-column col-12 col-lg-4">
             <label for="job">Professione</label>
-            <InputText id="job" type="text" v-model="anagraficaClienti.PROFESSIONE" />
+            <InputText id="job" type="text" v-model="anagraficaClienti.professione" />
           </div>
           <div class="flex flex-column col-12 col-lg-4">
             <label for="contract-date">Data di assunzione</label>
-            <Calendar id="contract-date" v-model="anagraficaClienti.DATA_ASSUNZIONE" dateFormat="dd-mm-yy" />
+            <Calendar id="contract-date" v-model="anagraficaClienti.dataAssunzione" dateFormat="dd-mm-yy" />
           </div>
           <div class="flex flex-column col-12 col-lg-4">
             <label for="expiration-date">Data di scadenza contratto</label>
-            <Calendar :disabled="anagraficaClienti.CONTRATTO_INDETERMINATO" id="expiration-date"
-              v-model="anagraficaClienti.DATA_SCADENZA_CONTRATTO" dateFormat="dd-mm-yy" />
+            <Calendar :disabled="anagraficaClienti.contrattoIndeterminato" id="expiration-date"
+              v-model="anagraficaClienti.dataScadenzaContratto" dateFormat="dd-mm-yy" />
             <div class="flex align-items-center">
-              <Checkbox inputId="undetermined" v-model="anagraficaClienti.CONTRATTO_INDETERMINATO" :binary="true"
+              <Checkbox inputId="undetermined" v-model="anagraficaClienti.contrattoIndeterminato" :binary="true"
                 @change="resetExpirationDate" />
               <label for="undetermined" style="margin:  1rem">Indeterminato</label>
             </div>
           </div>
           <div class="flex flex-column col-12 col-lg-4">
             <label for="enterprise-name">Nome Azienda</label>
-            <InputText id="enterprise-name" type="text" v-model="anagraficaClienti.DENOMINAZIONE_AZIENDA" />
+            <InputText id="enterprise-name" type="text" v-model="anagraficaClienti.nomeAzienda" />
           </div>
           <div class="flex align-items-center col-12 col-lg-4">
-            <Checkbox inputId="undetermined" v-model="anagraficaClienti.POLITICAMENTE_ESPOSTO" :binary="true" />
+            <Checkbox inputId="undetermined" v-model="anagraficaClienti.personaPoliticamenteEsposta" :binary="true" />
             <label for="undetermined" style="margin:  1rem">Persona politicamente esposta</label>
           </div>
           <div class="flex align-items-center col-12 col-lg-4">
-            <Checkbox inputId="undetermined" v-model="anagraficaClienti.GUIDATORE_ABITUALE" :binary="true" />
+            <Checkbox inputId="undetermined" v-model="anagraficaClienti.guidatoreAbituale" :binary="true" />
             <label for="undetermined" style="margin:  1rem">Guidatore abituale</label>
           </div>
         </div>
@@ -124,7 +129,11 @@
         <div class="flex justify-content-between " v-for="(item, index) of anagraficaClienti.indirizzi" :key="index">
 
           <div class="flex-grow-1  grid p-input-filled form-group" id="indirizzo">
-
+            <div class="flex flex-column col-12 ">
+              <label :for="'indirizzo-tipo-' + index">Tipo indirizzo</label>
+              <Dropdown :options="tipiIndirizzoOptions" optionLabel="text" optionValue="value"
+                v-model="item.idTipoIndirizzo"></Dropdown>
+            </div>
             <div class="flex flex-column col-12 col-lg-6">
               <label :for="'indirizzo-' + index">Indirizzo</label>
               <InputText :id="'indirizzo-' + index" type="text" v-model="item.indirizzo" />
@@ -133,19 +142,21 @@
               <label :for="'n-civico-' + index">N. Civico</label>
               <InputText :id="'n-civico-' + index" type="text" v-model="item.numeroCivico" />
             </div>
-            <div class="flex flex-column col-12 col-lg-3">
+            <ChooserGeography :nazioneSelected="item.idNazione" :regioneSelected="item.idRegione"
+              :provinciaSelected="item.idProvincia" :cittaSelected="item.idCitta"
+              @event_geoFilter="populateTempItemFromGeoFilter($event, item)"></ChooserGeography>
+            <!-- <div class="flex flex-column col-12 col-lg-3">
               <label for="birth-nation">Nazione </label>
               <Dropdown id="birth-nation" :showClear="true" :options="options.birthNation" optionLabel="nome"
-                optionValue="id" placeholder="Seleziona un'opzione" v-model="anagraficaClienti.idNazioneNascita"
-                @change="getRegions(anagraficaClienti.idNazioneNascita)"></Dropdown>
+                optionValue="id" placeholder="Seleziona un'opzione" v-model="item.idNazione"
+                @change="getRegions(item.idNazione)"></Dropdown>
             </div>
             <div class="flex flex-column col-12 col-lg-3">
               <label for="birth-region">Regione </label>
               <Dropdown id="birth-nation" :showClear="true" :options="options.birthRegion" optionLabel="nome"
                 optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
                 emptyMessage="Seleziona prima una nazione..." placeholder="Seleziona un'opzione"
-                v-model="anagraficaClienti.idRegioneNascita" @change="getProvinces(anagraficaClienti.idRegioneNascita)"
-                :filter="true">
+                v-model="item.idRegione" @change="getProvinces(item.idRegione)" :filter="true">
               </Dropdown>
             </div>
             <div class="flex flex-column col-12 col-lg-3">
@@ -153,8 +164,7 @@
               <Dropdown id="birth-province" :showClear="true" :options="options.birthProvince" optionLabel="nome"
                 optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
                 emptyMessage="Seleziona prima una regione..." placeholder="Seleziona un'opzione"
-                v-model="anagraficaClienti.idProvinciaNascita" @change="getCities(anagraficaClienti.idProvinciaNascita)"
-                :filter="true">
+                v-model="item.idProvincia" @change="getCities(item.idProvincia)" :filter="true">
               </Dropdown>
             </div>
             <div class="flex flex-column col-12 col-lg-3">
@@ -162,8 +172,8 @@
               <Dropdown id="birth-city" :showClear="true" :options="options.birthCity" optionLabel="nome"
                 optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
                 emptyMessage="Seleziona prima una provincia..." placeholder="Seleziona un'opzione"
-                v-model="anagraficaClienti.idCittaNascita" :filter="true"></Dropdown>
-            </div>
+                v-model="item.idCitta" :filter="true"></Dropdown>
+            </div> -->
           </div>
           <div class="  flex align-items-end justify-content-end pb-4" style="width: 50px">
             <i @click="anagraficaClienti.indirizzi.splice(index, 1)" role="button" class="pi pi-trash"
@@ -183,8 +193,12 @@
       <template #content>
         <div class="flex justify-content-between " v-for="(item, index) of anagraficaClienti.contatti" :key="index">
 
-          <div class="flex-grow-1  grid p-input-filled form-group" id="indirizzo">
-
+          <div class="flex-grow-1  grid p-input-filled form-group" id="contatto">
+            <div class="flex flex-column col-12 ">
+              <label :for="'contatto-tipo-' + index">Tipo contatto</label>
+              <Dropdown :options="tipiContattoOptions" optionLabel="text" optionValue="value"
+                v-model="item.idTipoContatto"></Dropdown>
+            </div>
             <div class="flex flex-column col-12 col-md-5">
               <label :for="'contatto-nome-' + index">Nome Contatto</label>
               <InputText :id="'contatto-nome-' + index" type="text" v-model="item.nome" />
@@ -216,8 +230,12 @@
       <template #content>
         <div class="flex justify-content-between " v-for="(item, index) of anagraficaClienti.documenti" :key="index">
 
-          <div class="flex-grow-1  grid p-input-filled form-group" id="indirizzo">
-
+          <div class="flex-grow-1  grid p-input-filled form-group" id="documento">
+            <div class="flex flex-column col-12 ">
+              <label :for="'documento-tipo-' + index">Tipo documento</label>
+              <Dropdown :options="tipidocumentoOptions" optionLabel="text" optionValue="value"
+                v-model="item.idTipoDocumento"></Dropdown>
+            </div>
             <div class="flex flex-column col-12 col-lg-6">
               <label :for="'doc-numero-' + index">Numero</label>
               <InputText :id="'doc-numero-' + index" type="text" v-model="item.numero" />
@@ -226,6 +244,15 @@
               <label :for="'doc-rilasciato-da-' + index">Rilasciato da</label>
               <InputText :id="'doc-rilasciato-da-' + index" type="text" v-model="item.rilasciatoDa" />
             </div>
+            <div class="flex flex-column col-12 col-lg-6">
+              <label>Data di Rilascio</label>
+              <Calendar v-model="item.dataRilascio" :minDate="new Date()"></Calendar>
+            </div>
+            <div class="flex flex-column col-12 col-lg-6">
+              <label>Data di Scadenza</label>
+              <Calendar v-model="item.dataScadenza" :minDate="item.dataRilascio || new Date()"></Calendar>
+            </div>
+
           </div>
           <div class="  flex align-items-end justify-content-end pb-4" style="width: 50px">
             <i @click="anagraficaClienti.documenti.splice(index, 1)" role="button" class="pi pi-trash"
@@ -243,7 +270,7 @@
     <Card>
       <template #content>
         <div class="flex justify-content-end mt-4">
-          <Button label="Salva" @click="saveForm"></Button>
+          <Button :loading="loading" label="Salva" @click="saveForm"></Button>
         </div>
       </template>
     </Card>
@@ -257,7 +284,7 @@
 import { ref } from 'vue'
 import AxiosService from '../../axiosServices/AxiosService';
 import { useToast } from 'primevue/usetoast';
-
+import ChooserGeography from '@/components/ChooserGeography.vue'
 // eslint-disable-next-line no-undef
 const props = defineProps({
   sidebarVisible: Boolean,
@@ -272,7 +299,11 @@ const toast = useToast()
 //GET SIDEBARDATA
 function setupSidebar() {
   if (props.sidebarData) {
-    Object.assign(anagraficaClienti.value, props.sidebarData);
+
+    const serviceGET = new AxiosService('Anagrafiche/Retail/' + props.sidebarData.id)
+    serviceGET.read().then(res => anagraficaClienti.value = res).catch(err => console.log(err))
+
+    // Object.assign(anagraficaClienti.value, props.sidebarData);
   }
 }
 
@@ -354,13 +385,14 @@ function addRowIndirizzi() {
     idCitta: 0
   })
 }
-
+const loading = ref(false)
 function saveForm() {
+  loading.value = true
   const servicePOST = new AxiosService('Anagrafiche/AddRetail')
   const servicePUT = new AxiosService('Anagrafiche/SaveRetail')
-  if (anagraficaClienti.value.ID) {
+  if (anagraficaClienti.value.ID || anagraficaClienti.value.id) {
     servicePUT.update(anagraficaClienti.value)
-      .then(res => {
+      .then(() => {
         toast.add(
           {
             severity: 'success',
@@ -383,6 +415,9 @@ function saveForm() {
         )
         emit('event_refreshList')
         emit('event_HideNuovaAnagrafica')
+      })
+      .finally(() => {
+        loading.value = false
       })
   } else {
     servicePOST.create(anagraficaClienti.value)
@@ -412,11 +447,14 @@ function saveForm() {
         emit('event_refreshList')
         emit('event_HideNuovaAnagrafica')
       })
+      .finally(() => {
+        loading.value = false
+      })
   }
 }
 
 function resetExpirationDate() {
-  anagraficaClienti.value.DATA_SCADENZA_CONTRATTO = ''
+  anagraficaClienti.value.dataScadenzaContratto = ''
 }
 
 function getSex() {
@@ -506,25 +544,25 @@ function getCities(idProvince) {
 }
 
 const anagraficaClienti = ref({
-  NOME: '',
-  COGNOME: '',
-  CODICE_FISCALE: '',
-  ID_SESSO: "",
-  NASCITA_DATA: '',
-  CITTADINANZA: '',
-  NASCITA_NAZIONE_ID: '',
-  NASCITA_REGIONE_ID: '',
-  NASCITA_PROVINCIA_ID: '',
-  NASCITA_CITTA_ID: '',
-  ID_STATO_CIVILE: '',
-  ID_TIPO_OCCUPAZIONE: '',
-  PROFESSIONE: '',
-  DATA_ASSUNZIONE: '',
-  DATA_SCADENZA_CONTRATTO: '',
-  CONTRATTO_INDETERMINATO: '',
-  DENOMINAZIONE_AZIENDA: '',
-  POLITICAMENTE_ESPOSTO: false,
-  GUIDATORE_ABILE: false,
+  nome: '',
+  cognome: '',
+  codiceFiscale: '',
+  idSesso: "",
+  dataNascita: '',
+  cittadinanza: '',
+  idNazioneNascita: '',
+  idRegioneNascita: '',
+  idProvinciaNascita: '',
+  idCittaNascita: '',
+  idStatoCivile: '',
+  idTipoOccupazione: '',
+  professione: '',
+  dataAssunzione: '',
+  dataScadenzaContratto: '',
+  contrattoIndeterminato: '',
+  nomeAzienda: '',
+  personaPoliticamenteEsposta: false,
+  guidatoreAbituale: false,
   indirizzi: [],
   contatti: [],
   documenti: [],
@@ -543,5 +581,38 @@ const options = ref({
   jobActivityType: []
 })
 
+function populateTempItemFromGeoFilter(event, item) {
+  item.idNazione ? item.idNazione = event.idNazione : item.idNazioneNascita = event.idNazione
+  item.idRegione ? item.idRegione = event.idRegione : item.idRegioneNascita = event.idRegione
+  item.idProvincia ? item.idProvincia = event.idProvincia : item.idProvinciaNascita = event.idProvincia
+  item.idCitta ? item.idCitta = event.idCitta : item.idCittaNascita = event.idCitta
 
+}
+
+const tipiIndirizzoOptions = ref()
+function getTipiIndirizzo() {
+  const serviceGET = new AxiosService('Options/GetTipoIndirizzo')
+  serviceGET.read().then(res => tipiIndirizzoOptions.value = res).catch(err => console.log(err))
+}
+
+getTipiIndirizzo()
+
+const tipidocumentoOptions = ref()
+function getTipiDocumento() {
+  const serviceGET = new AxiosService('Options/GetTipoDocumento')
+  serviceGET.read().then(res => tipidocumentoOptions.value = res).catch(err => console.log(err))
+}
+
+getTipiDocumento()
+
+const tipiContattoOptions = ref()
+function getTipiContatto() {
+  const serviceGET = new AxiosService('Options/GetTipoContatto')
+  serviceGET.read().then(res => tipiContattoOptions.value = res).catch(err => console.log(err))
+}
+
+
+setupSidebar()
+
+getTipiContatto()
 </script>

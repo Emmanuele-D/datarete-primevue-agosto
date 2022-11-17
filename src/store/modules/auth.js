@@ -8,8 +8,8 @@ import { USER_REQUEST } from "../actions/user";
 import axios from "axios";
 
 const state = {
-  token: localStorage.getItem("user-token") || "",
-  IdUser: localStorage.getItem("user-id") || "",
+  token: localStorage.getItem("DR_P-user-token") || "",
+  IdUser: localStorage.getItem("DR_P-user-id") || "",
   status: "",
   hasLoadedOnce: false,
 };
@@ -28,8 +28,8 @@ const actions = {
         .then((resp) => {
           if (resp.data.Success) {
             console.log("/Auth RESP", resp);
-            localStorage.setItem("user-token", resp.data.Token);
-            localStorage.setItem("user-id", resp.data.IdUser);
+            localStorage.setItem("DR_P-user-token", resp.data.Token);
+            localStorage.setItem("DR_P-user-id", resp.data.IdUser);
             axios.defaults.headers.common["Authorization"] = resp.data.Token;
             commit(AUTH_SUCCESS, resp);
             dispatch(USER_REQUEST, resp.data.IdUser);
@@ -44,7 +44,7 @@ const actions = {
             err
           );
           commit(AUTH_ERROR, err);
-          localStorage.removeItem("user-token");
+          localStorage.removeItem("DR_P-user-token");
           reject(err);
         });
     });
@@ -52,7 +52,7 @@ const actions = {
   [AUTH_LOGOUT]: ({ commit }) => {
     return new Promise((resolve) => {
       commit(AUTH_LOGOUT);
-      localStorage.removeItem("user-token");
+      localStorage.removeItem("DR_P-user-token");
       delete axios.defaults.headers.common["Authorization"];
       resolve();
     });

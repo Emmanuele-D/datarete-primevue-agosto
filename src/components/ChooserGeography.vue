@@ -1,40 +1,37 @@
 <template>
-  <div class="grid w-100">
-    <div class="flex flex-column align-items-start 
-        col-6 md:col-4">
+  <div class="flex flex-wrap justify-content-between w-full p-3">
+    <div class="flex flex-column align-items-start flex-grow " style="min-width:20%">
       <label for="nazione">Nazione</label>
-      <div class="flex align-items-center">
-        <Dropdown @change="getRegioni(nazioneSelected)" id="nazione" v-model="nazioneSelected" :options="nazioneOptions"
-          optionLabel="nome" optionValue="id" placeholder="Seleziona la Nazione">
+      <div class="flex align-items-center w-full mr-2">
+        <Dropdown class="w-full mr-4" @change="getRegioni(nazioneSelected.id)" id="nazione" v-model="nazioneSelected"
+          :options="nazioneOptions" optionLabel="nome" placeholder="Seleziona la Nazione">
         </Dropdown>
       </div>
     </div>
-    <div class="flex flex-column align-items-start 
-        col-6 md:col-4">
+    <div class="flex flex-column align-items-start flex-grow " style="min-width:20%">
       <label for="regione">Regione</label>
-      <div class="flex align-items-center">
-        <Dropdown @change="getProvince(regioneSelected)" id="regione" v-model="regioneSelected"
-          :options="regioneOptions" optionLabel="nome" optionValue="id" placeholder="Seleziona la Regione">
+      <div class="flex align-items-center w-full mr-2">
+        <Dropdown class="w-full mr-4" @change="getProvince(regioneSelected.id)" id="regione" v-model="regioneSelected"
+          :options="regioneOptions" optionLabel="nome" placeholder="Seleziona la Regione">
         </Dropdown>
 
       </div>
     </div>
-    <div class="flex flex-column align-items-start 
-        col-6 md:col-4">
+    <div class="flex flex-column align-items-start flex-grow " style="min-width:20%">
       <label for="provincia">Provincia</label>
-      <div class="flex align-items-center">
-        <Dropdown @change="getCitta(provinciaSelected)" id="provincia" v-model="provinciaSelected"
-          :options="provinciaOptions" optionLabel="nome" optionValue="id" placeholder="Seleziona la Provincia">
+      <div class="flex align-items-center w-full mr-2">
+        <Dropdown class="w-full mr-4" @change="getCitta(provinciaSelected.id)" id="provincia"
+          v-model="provinciaSelected" :options="provinciaOptions" optionLabel="nome"
+          placeholder="Seleziona la Provincia">
         </Dropdown>
 
       </div>
     </div>
-    <div class="flex flex-column align-items-start 
-        col-6 md:col-4">
+    <div class="flex flex-column align-items-start flex-grow " style="min-width:20%">
       <label for="citta">Città</label>
-      <div class="flex align-items-center">
-        <Dropdown @change="emitGeoFilter" id="citta" v-model="cittaSelected" :options="cittaOptions" optionLabel="nome"
-          optionValue="id" placeholder="Seleziona la Città"></Dropdown>
+      <div class="flex align-items-center w-full mr-2">
+        <Dropdown class="w-full mr-4" @change="emitGeoFilter" id="citta" v-model="cittaSelected" :options="cittaOptions"
+          optionLabel="nome" placeholder="Seleziona la Città"></Dropdown>
 
       </div>
     </div>
@@ -59,50 +56,68 @@ const emit = defineEmits(['event_geoFilter'])
 
 const isSetup = ref(true)
 
-const nazioneSelected = ref(props.nazioneSelected)
+const nazioneSelected = ref(undefined)
 const nazioneOptions = ref([])
+
+// GET NAZIONI
 async function getNazioni() {
 
-  isSetup.value ? null : restartResetField('regioni')
+  isSetup.value ? console.log('is Setup Nat') : restartResetField('nazioni')
 
   const serviceGET = new AxiosService('Options/Geographic/GetNazioni')
   await serviceGET.read()
-    .then(res => {
+    .then(async res => {
       nazioneOptions.value = res
+      isSetup.value
+        ? nazioneSelected.value = nazioneOptions.value.filter(x => x.id == props.nazioneSelected)[0]
+        : console.log('not isSetup')
+
       if (nazioneSelected.value) {
-        getRegioni(nazioneSelected.value)
+        await getRegioni(nazioneSelected.value.id)
       }
     })
     .catch(error => console.log(error))
 }
 
-
-const regioneSelected = ref(props.regioneSelected)
+// GET REGIONI
+const regioneSelected = ref(undefined)
 const regioneOptions = ref([])
 async function getRegioni(idNazione) {
-  isSetup.value ? null : restartResetField('province')
+
+  isSetup.value ? console.log('is Setup Reg') : restartResetField('regioni')
   const serviceGET = new AxiosService('Options/Geographic/GetRegioni/' + idNazione)
   await serviceGET.read()
-    .then(res => {
+    .then(async res => {
       regioneOptions.value = res
+      isSetup.value
+        ? regioneSelected.value = regioneOptions.value.filter(x => x.id == props.regioneSelected)[0]
+        : console.log('not isSetup')
+
       if (regioneSelected.value) {
-        getProvince(regioneSelected.value)
+        await getProvince(regioneSelected.value.id)
       }
     })
     .catch(error => console.log('getRegioni', error))
+
 }
 
-
+// GET PRIOVINCIA
 const provinciaSelected = ref(props.provinciaSelected)
 const provinciaOptions = ref([])
 async function getProvince(idRegione) {
-  isSetup.value ? null : restartResetField('citta')
+
+  isSetup.value ? console.log('is Setup Pro') : restartResetField('provincia')
+
   const serviceGET = new AxiosService('Options/Geographic/GetProvince/' + idRegione)
   await serviceGET.read()
-    .then(res => {
+    .then(async res => {
       provinciaOptions.value = res
+      isSetup.value
+        ? provinciaSelected.value = provinciaOptions.value.filter(x => x.id == props.provinciaSelected)[0]
+        : console.log('not isSetup')
+
       if (provinciaSelected.value) {
-        getCitta(provinciaSelected.value)
+        await getCitta(provinciaSelected.value.id)
       }
     })
     .catch(error => console.log(error))
@@ -115,8 +130,16 @@ async function getCitta(idProvincia) {
   await serviceGET.read()
     .then(res => {
       cittaOptions.value = res
+
+      isSetup.value
+        ? cittaSelected.value = cittaOptions.value.filter(x => x.id == props.cittaSelected)[0]
+        : console.log('not isSetup')
+
     })
     .catch(error => console.log(error))
+    .finally(() => {
+      isSetup.value = false
+    })
 }
 
 function emitGeoFilter() {
@@ -132,8 +155,19 @@ function emitGeoFilter() {
 }
 
 function restartResetField(scope) {
-
+  console.log('is reset ', scope)
   switch (scope) {
+    case 'nazioni':
+      nazioneOptions.value.splice(0)
+      nazioneSelected.value = null
+      regioneOptions.value.splice(0)
+      regioneSelected.value = null
+      provinciaOptions.value.splice(0)
+      provinciaSelected.value = null
+      cittaOptions.value.splice(0)
+      cittaSelected.value = null
+      emitGeoFilter()
+      break
     case 'regioni':
       regioneOptions.value.splice(0)
       regioneSelected.value = null
@@ -143,7 +177,7 @@ function restartResetField(scope) {
       cittaSelected.value = null
       emitGeoFilter()
       break
-    case 'province':
+    case 'provincia':
       provinciaOptions.value.splice(0)
       provinciaSelected.value = null
       cittaOptions.value.splice(0)
@@ -161,7 +195,6 @@ function restartResetField(scope) {
 
 async function setupComponent() {
   await getNazioni()
-  this.isSetup.value = false
 }
 
 

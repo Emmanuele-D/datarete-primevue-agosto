@@ -47,6 +47,11 @@ const router = createRouter({
           component: () => import("@/views/TestTry.vue"),
         },
         {
+          path: "/testtry2",
+          name: "test",
+          component: () => import("@/views/TestTry2.vue"),
+        },
+        {
           path: "",
           name: "Dashboard",
           component: () => import("@/views/Dashboard.vue"),
@@ -63,6 +68,29 @@ const router = createRouter({
           },
         },
         {
+          path: "amministrazione",
+          name: "amministrazione",
+          children: [
+            {
+              path: "scadenziario-pagamenti",
+              component: () =>
+                import("@/views/amministrazione/ScadenziarioPagamenti.vue"),
+            },
+            {
+              path: "note-spesa",
+              component: () => import("@/views/gestione/NoteSpesa.vue"),
+            },
+            {
+              path: "ordini",
+              component: () => import("@/views/gestione/Ordini.vue"),
+            },
+            {
+              path: "fornitori",
+              component: () => import("@/views/gestione/Fornitori.vue"),
+            },
+          ],
+        },
+        {
           path: "bacheca",
           name: "bacheca",
           children: [
@@ -77,6 +105,11 @@ const router = createRouter({
           path: "anagrafiche",
           name: "anagrafiche",
           children: [
+            {
+              path: "academy",
+              name: "academy",
+              component: () => import("@/views/anagrafiche/Accademy.vue"),
+            },
             {
               path: "clienti",
               name: "clienti",
@@ -113,6 +146,11 @@ const router = createRouter({
           path: "pratiche",
           name: "pratiche",
           children: [
+            {
+              path: "dettaglio-pratica/:idPratica",
+              name: "dettaglio-pratica",
+              component: () => import("@/views/pratiche/DettaglioPratica.vue"),
+            },
             {
               path: "preventivo-mutuo",
               name: "preventivo-mutuo",
@@ -176,8 +214,33 @@ const router = createRouter({
           name: "gestione",
           children: [
             {
+              path: "stati-pratica",
+              component: () => import("@/views/gestione/StatiPratica.vue"),
+            },
+            {
+              path: "corsi-di-formazione",
+              component: () => import("@/views/gestione/CorsiDiFormazione.vue"),
+            },
+            {
+              path: "dettaglio-corso/:idCorso",
+              component: () =>
+                import("@/views/gestione/DettaglioCorsoDiFormazione.vue"),
+            },
+            {
+              path: "argomenti-ticket",
+              component: () => import("@/views/gestione/ArgomentiTicket.vue"),
+            },
+            {
               path: "utenti",
               component: () => import("@/views/gestione/Users.vue"),
+            },
+            {
+              path: "scripts",
+              component: () => import("@/views/gestione/Scripts.vue"),
+            },
+            {
+              path: "questionari",
+              component: () => import("@/views/gestione/Questionari.vue"),
             },
             {
               path: "stati-anagrafica",
@@ -295,6 +358,15 @@ const router = createRouter({
           name: "plugins",
           children: [
             {
+              path: "censimento-istituti-credito",
+              component: () =>
+                import("@/views/plugins/CensimentoIstitutiDiCredito.vue"),
+            },
+            {
+              path: "gestione-invii",
+              component: () => import("@/views/plugins/GestioneInvii.vue"),
+            },
+            {
               path: "gestione-visitatori",
               component: () => import("@/views/plugins/GestioneVisitatori.vue"),
             },
@@ -311,6 +383,14 @@ const router = createRouter({
               path: "data-drive",
               component: () => import("@/views/plugins/DataDrive.vue"),
             },
+            {
+              path: "data-drive-mkt",
+              component: () => import("@/views/plugins/DataDriveMkt.vue"),
+            },
+            {
+              path: "inventario",
+              component: () => import("@/views/plugins/Inventario.vue"),
+            },
           ],
         },
         {
@@ -318,9 +398,13 @@ const router = createRouter({
           name: "crm",
           component: () => import("@/views/CRM/CrmLayout.vue"),
         },
+        {
+          path: "organigramma",
+          name: "organigramma",
+          component: () => import("@/views/Organigramma.vue"),
+        },
       ],
     },
-    
   ],
 });
 

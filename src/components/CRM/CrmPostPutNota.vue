@@ -1,33 +1,38 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-  <span class="flex flex-column justify-content-between align-items-center mb-4">
-    <h4 v-if="item">Modifica Nota</h4>
-    <h4 v-else>Nuova Nota</h4>
-    <FileUpload :disabled="files.length > 0" @uploader="uploadFile" mode="basic" uploadIcon="pi pi-paperclip"
-      name="demo[]" :customUpload="true" accept="image/*" :previewWidth="50" :maxFileSize="1000000"
-      :chooseLabel="files.length > 0 ? 'Documento Caricato' : 'Carica Documento'" :auto='true' />
-  </span>
-  <div class="flex flex-column mb-4">
-    <label for="titolo">Titolo</label>
-    <InputText id="titolo" type="text" v-model="tmpItem.oggetto" />
-  </div>
-  <div class="flex flex-column">
-    <label for="editor">Dettaglio</label>
-    <Editor id="editor" v-model="tmpItem.messaggio" editorStyle="height: 320px">
-      <template v-slot:toolbar>
-        <span class="ql-formats">
-          <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
-          <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
-          <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
-        </span>
-      </template>
-    </Editor>
-  </div>
+  <h4 v-if="item">Modifica Nota</h4>
+  <h4 v-else>Nuova Nota</h4>
+  <Accordion v-model:activeIndex="activeTab">
+    <AccordionTab header="Apri Editor">
+      <span class="flex flex-column justify-content-between align-items-center mb-4">
 
-  <div class="flex justify-content-end">
-    <Button @click="switchToView" class="mt-4 p-button-secondary mr-2" label="Annulla"></Button>
-    <Button @click="salva" class="mt-4" label="Salva"></Button>
-  </div>
+        <FileUpload :disabled="files.length > 0" :fileLimit="1" @uploader="uploadFile" mode="basic"
+          uploadIcon="pi pi-paperclip" name="demo[]" :customUpload="true" :previewWidth="50" :maxFileSize="1000000"
+          :chooseLabel="files.length > 0 ? 'Documento Caricato' : 'Carica Documento'" :auto='true' />
+      </span>
+      <div class="flex flex-column mb-4">
+        <label for="titolo">Titolo</label>
+        <InputText id="titolo" type="text" v-model="tmpItem.oggetto" />
+      </div>
+      <div class="flex flex-column">
+        <label for="editor">Dettaglio</label>
+        <Editor id="editor" v-model="tmpItem.messaggio" editorStyle="height: 100px">
+          <template v-slot:toolbar>
+            <span class="ql-formats">
+              <button class="ql-bold" v-tooltip.bottom="'Bold'"></button>
+              <button class="ql-italic" v-tooltip.bottom="'Italic'"></button>
+              <button class="ql-underline" v-tooltip.bottom="'Underline'"></button>
+            </span>
+          </template>
+        </Editor>
+      </div>
+
+      <div class="flex justify-content-end">
+        <Button @click="switchToView" class="mt-4 p-button-secondary mr-2" label="Annulla"></Button>
+        <Button :loading="loading" @click="salva" class="mt-4" label="Salva"></Button>
+      </div>
+    </AccordionTab>
+  </Accordion>
 </template>
 
 <script setup>
@@ -41,8 +46,10 @@ const props = defineProps({
   item: Object,
 })
 
+const activeTab = ref(null)
+
 // eslint-disable-next-line no-undef
-const emits = defineEmits(['switchToView'])
+const emits = defineEmits(['switchToView', 'reloadFeed'])
 
 const route = useRoute()
 const toast = useToast()
@@ -50,24 +57,24 @@ const toast = useToast()
 const tmpItem = ref({ ...props.item })
 
 const isSending = ref(false)
+const loading = ref(false)
 const files = ref([])
 
 function uploadFile(ev) {
-
+  console.log('uploader, ', ev.files[0])
   const service = new AxiosService('files')
   if (!isSending.value) {
     isSending.value = true
-    let promises = [];
-    for (let i = 0; i < ev.files.length; i++) {
-      const formData = new FormData();
-      formData.append("file", ev.files[i]);
-      promises.push(service.postCustomEndpoint('Upload?type=' + 'CRM_Note', '', formData));
-    }
-    Promise.all(promises)
-      .then((results) => {
-        results.forEach((res) => {
-          files.value = res
-        });
+    const formData = new FormData();
+    formData.append("file", ev.files[0]);
+    service.postCustomEndpoint('Upload?type=' + 'CRM_Note', '', formData)
+      .then(res => {
+        if (res) {
+          tmpItem.value.allegato = res
+        }
+      })
+      .catch(err => {
+        console.log(err)
       })
       .finally(() => {
         isSending.value = false
@@ -79,7 +86,7 @@ function uploadFile(ev) {
 const servicePOST = new AxiosService('Crm/InsertCrmRecord/' + route.params.idAnagrafica)
 const servicePUT = new AxiosService('Crm/EditCrmRecord')
 function salva() {
-
+  loading.value = true
   if (tmpItem.value.id) {
     servicePUT.update(tmpItem.value)
       .then(() => {
@@ -103,6 +110,9 @@ function salva() {
         );
       })
       .finally(() => {
+        resetForm()
+        loading.value = false
+        emits('reloadFeed')
         switchToView()
       })
   } else {
@@ -129,13 +139,18 @@ function salva() {
           }
         );
       })
-
+      .finally(() => {
+        resetForm()
+        emits('reloadFeed')
+        loading.value = false
+        activeTab.value = null
+      })
   }
-
-
-
 }
 
+function resetForm() {
+  tmpItem.value = {}
+}
 
 function switchToView() {
   emits('switchToView')

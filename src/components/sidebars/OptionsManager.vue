@@ -25,9 +25,18 @@
   </div>
   <div class="gestione-livelli-login mt-4"
     v-if="sidebarData.event.optionName == 'Gestione Livelli Login' && sidebarData.event.id && mainMenu">
-    <MenuCheckboxes :menu="mainMenu" :id="sidebarData.event.id"></MenuCheckboxes>
+    <Accordion>
+      <AccordionTab header="Gestisci l'accesso al menu">
+        <MenuCheckboxes :menu="mainMenu" :id="sidebarData.event.id"></MenuCheckboxes>
+      </AccordionTab>
+      <AccordionTab header="Gestisci i privilegi nei componenti">
+        <GestionePrivilegiComponenti @hideGestionePrivilegi="hideGestionePrivilegi" :id="sidebarData.event.id">
+        </GestionePrivilegiComponenti>
+      </AccordionTab>
+    </Accordion>
+
   </div>
-  <div class="w-100 flex justify-content-end align-items-end col-12 col-md-2">
+  <div class="w-100 flex justify-content-end align-items-end col-12 col-md-2 mt-4">
     <Button label="Salva" @click="save"></Button>
   </div>
 </template>
@@ -36,6 +45,7 @@ import { ref, defineEmits, defineProps } from 'vue';
 import { useToast } from 'primevue/usetoast'
 import AxiosService from '@/axiosServices/AxiosService';
 import MenuCheckboxes from '../MenuCheckboxes.vue';
+import GestionePrivilegiComponenti from '../GestionePrivilegiComponenti.vue';
 
 const emits = defineEmits(['event_HideOptionsManager', 'event_refreshList'])
 
@@ -91,4 +101,8 @@ function getMainMenu() {
     })
 }
 props.sidebarData.event.optionName == 'Gestione Livelli Login' ? getMainMenu() : null
+
+function hideGestionePrivilegi() {
+  emits('event_HideOptionsManager')
+}
 </script>

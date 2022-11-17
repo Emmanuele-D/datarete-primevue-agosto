@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <h1>{{
-    pageTitle
+        pageTitle
     }}</h1>
     <TableBuilder @event_ShowSidebar_nuovoAppuntamento="$router.push('/eventi')" @event_ShowSidebar_creaPratica="null"
       @event_ShowSidebar_elimina="null" :data="tableItems" :headersConfig="columns" :showAzioni="false"
@@ -81,7 +81,47 @@ const tableItems = [
     durata: 4,
     ultimo_stato: 'in lavorazione',
     data_ultimo_stato: new Date()
-  }
+  },
+  {
+    id: 0,
+    nome_cliente: 'Luca Bianchi',
+    nome_agente: 'Emmanuele Durante',
+    data_inserimento: new Date(),
+    importo_richiesto: 180000,
+    durata: 10,
+    ultimo_stato: 'in lavorazione',
+    data_ultimo_stato: new Date()
+  },
+  {
+    id: 0,
+    nome_cliente: 'Leonardo Verdi',
+    nome_agente: 'Emmanuele Durante',
+    data_inserimento: new Date(),
+    importo_richiesto: 300000,
+    durata: 4,
+    ultimo_stato: 'in lavorazione',
+    data_ultimo_stato: new Date()
+  },
+  {
+    id: 0,
+    nome_cliente: 'Mario Rossi',
+    nome_agente: 'Emmanuele Durante',
+    data_inserimento: new Date(),
+    importo_richiesto: 10000,
+    durata: 3,
+    ultimo_stato: 'in lavorazione',
+    data_ultimo_stato: new Date()
+  },
+  {
+    id: 0,
+    nome_cliente: 'Giuseppe Fabbri',
+    nome_agente: 'Emmanuele Durante',
+    data_inserimento: new Date(),
+    importo_richiesto: 22000,
+    durata: 2,
+    ultimo_stato: 'in lavorazione',
+    data_ultimo_stato: new Date()
+  },
 ]
 
 
@@ -107,7 +147,7 @@ const config = ref({
   ]
 })
 
-let pageTitle = ref('')
+let pageTitle = ref('In Lavorazione')
 
 
 

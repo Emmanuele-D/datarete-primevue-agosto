@@ -67,6 +67,10 @@ export default class AxiosService {
     return axios.delete(address).then((res) => res.data);
   }
 
+  deleteCustomWQuery(endpoint, value){
+    return axios.delete(endpoint + '?id=' + value).then(res => res.data)
+  }
+
   getOptions(optionName) {
     return axios.get(url_options + optionName).then((res) => res.data);
   }

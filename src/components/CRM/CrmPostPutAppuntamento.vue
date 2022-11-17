@@ -2,29 +2,34 @@
   <Toast></Toast>
   <h4 v-if="item">Modifica Appuntamento</h4>
   <h4 v-else class="mb-4">Nuovo Appuntamento</h4>
-  <div class="w-full flex flex-column align-items-start mb-4">
-    <label for="title">Titolo</label>
-    <InputText v-model="tmpItem.title" class="w-full" id="title" placeholder="titolo"></InputText>
-  </div>
-  <div class="w-full flex flex-column align-items-start mb-4">
-    <label for="title">Descrizione</label>
-    <InputText v-model="tmpItem.description" class="w-full" id="title" placeholder="descrizione"></InputText>
-  </div>
-  <div class="flex">
-    <div class=" flex flex-column align-items-start mb-4 mr-2">
-      <label for="data">Data Inizio</label>
-      <Calendar v-model="tmpItem.start" class="w-full" inputId="data" :minDate="minDate" :manualInput="false"
-        :showTime="true" :showButtonBar="true" :baseZIndex="1001" />
-    </div>
-    <div class=" flex flex-column align-items-start mb-4">
-      <label for="data">Data Fine</label>
-      <Calendar v-model="tmpItem.end" class="w-full" inputId="data" :minDate="tmpItem.start" :manualInput="false"
-        :showTime="true" :showButtonBar="true" :baseZIndex="1001" />
-    </div>
-  </div>
-  <div class="flex justify-content-end">
-    <Button :loading="loading" @click="salva" class="mt-4" label="Salva"></Button>
-  </div>
+  <Accordion>
+    <AccordionTab header="Apri Editor">
+      <div class="w-full flex flex-column align-items-start mb-4">
+        <label for="title">Titolo</label>
+        <InputText v-model="tmpItem.title" class="w-full" id="title" placeholder="titolo"></InputText>
+      </div>
+      <div class="w-full flex flex-column align-items-start mb-4">
+        <label for="title">Descrizione</label>
+        <InputText v-model="tmpItem.description" class="w-full" id="title" placeholder="descrizione"></InputText>
+      </div>
+      <div class="grid">
+        <div class="col-6 flex flex-column align-items-start mb-4 ">
+          <label for="data">Data Inizio</label>
+          <Calendar v-model="tmpItem.start" class="w-full" inputId="data" :minDate="minDate" :manualInput="false"
+            :showTime="true" :showButtonBar="true" :baseZIndex="1001" />
+        </div>
+        <div class="col-6 flex flex-column align-items-start mb-4">
+          <label for="data">Data Fine</label>
+          <Calendar v-model="tmpItem.end" class="w-full" inputId="data" :minDate="tmpItem.start" :manualInput="false"
+            :showTime="true" :showButtonBar="true" :baseZIndex="1001" />
+        </div>
+      </div>
+      <div class="flex justify-content-end">
+        <Button :loading="loading" @click="salva" class="mt-4" label="Salva"></Button>
+      </div>
+    </AccordionTab>
+  </Accordion>
+
 </template>
 
 <script setup>

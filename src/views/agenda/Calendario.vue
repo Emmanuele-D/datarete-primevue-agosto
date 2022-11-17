@@ -2,6 +2,10 @@
   <Card class="mb-4">
     <template #content>
       <div class="flex justify-content-end">
+        <MultiSelect optionLabel="text" optionValue="value" placeholder="Condividi calendario"
+          :options="sidebarEventiData.userOptions" class="mr-4" v-model="userSelected"></MultiSelect>
+        <Dropdown optionLabel="text" optionValue="value" placeholder="Visualizza condiviso" :options="users"
+          class="mr-4"></Dropdown>
         <Button :loading="genLoading" @click="showSidebarEventi" label="Crea Evento"></Button>
       </div>
     </template>
@@ -9,14 +13,12 @@
   <Card>
     <template #content>
       <CalendarBuilder viewsOptions="dayGridMonth,timeGridWeek,timeGridDay listYear" :callsToCalendar="callsToCalendar"
-        eventsEndpoint="Calendar/GetEvents/0" initialView="dayGridMonth"
-        @event_Calendar_ClickedEvent="showDetailsEvent">
+        :eventsEndpoint="calendarEndpoint" initialView="dayGridMonth" @event_Calendar_ClickedEvent="showDetailsEvent">
       </CalendarBuilder>
     </template>
   </Card>
   <Sidebar v-model:visible="sidebarEventiVisible" :baseZIndex="10000" position="right" class="p-sidebar-md">
-    <SidebarEventi @event_HideSidebarEventi="hideSidebarEventi" @event_refreshEvents="refreshCalendar"
-      :sidebarData="sidebarEventiData"></SidebarEventi>
+    <SidebarEventi @event_refreshEvents="refreshCalendar" :sidebarData="sidebarEventiData"></SidebarEventi>
   </Sidebar>
 
   <Sidebar v-model:visible="detailsEventVisible" :baseZIndex="10000" position="right" class="p-sidebar-md"
@@ -36,9 +38,13 @@ import AxiosService from '@/axiosServices/AxiosService'
 import CalendarBuilder from '../../components/CalendarBuilder.vue'
 import SidebarEventi from '../../components/sidebars/SidebarEventi.vue'
 import DetailsEvent from '../../components/sidebars/DetailsEvent.vue'
+import { useStore } from 'vuex'
 
+const store = useStore()
+const id_user = store.state.user.user.id
 const genLoading = ref(false)
 
+const userSelected = ref([])
 
 // SIDEBAR DETAILS EVENT
 const detailsEventVisible = ref(false)
@@ -61,25 +67,16 @@ function hideDetailsEvent() {
   detailsEventVisible.value = false
 }
 
-
+const calendarEndpoint = ref('Calendar/GetEvents/')
+function setCalendarEndpoint() {
+  calendarEndpoint.value = 'Calendar/GetEvents/0/' + store.state.user.user.id
+}
+setCalendarEndpoint()
 // SIDEBAR EDIT EVENT
 const sidebarEventiVisible = ref(false)
 const sidebarEventiData = ref({})
 async function showSidebarEventi() {
-  genLoading.value = true
-
-  const serviceGET = new AxiosService('Options/GetUsers')
-  await serviceGET.read()
-    .then(res => {
-      console.log("🚀 ~ file: SidebarEventi.vue ~ line 206 ~ getOptionsUsers ~ res", res)
-      sidebarEventiData.value.userOptions = res
-    })
-
-
-
-
   sidebarEventiVisible.value = true
-  genLoading.value = false
 }
 function hideSidebarEventi() {
   sidebarEventiVisible.value = false
@@ -89,9 +86,28 @@ const callsToCalendar = ref(0)
 function refreshCalendar() {
   callsToCalendar.value++
 }
+
+const users = ref(null)
+function getUsers() {
+  const service = new AxiosService('Options/GetUsers')
+  service.read()
+    .then(res => {
+      sidebarEventiData.value.userOptions = res
+    })
+}
+getUsers()
+
+// const sharedWithYouYou = ref([])
+// function getsharedWithYouYou() {
+//   const service = new AxiosService('Calendar/ShareWithList/' + id_user)
+//   service.read()
+//     .then(res => sharedWithYouYou.value = res)
+// }
+// getsharedWithYouYou()
 // function showClickedEvent(event) {
 //   sidebarEventiVisible.value = true
 //   Object.assign(sidebarEventiData.value, event);
 // }
+
 
 </script>

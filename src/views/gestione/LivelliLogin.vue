@@ -37,7 +37,7 @@
   </div>
   <Sidebar v-model:visible="sidebarVisible" :baseZIndex="10000" position="right" class="p-sidebar-md"
     @hide="$emit('event_HideOptionsManager')">
-    <OptionsManager :sidebarData="sidebarData">
+    <OptionsManager @event_HideOptionsManager="hideSidebar" :sidebarData="sidebarData">
     </OptionsManager>
   </Sidebar>
 </template>
@@ -107,6 +107,14 @@ function showSidebar(event) {
   sidebarData.value.event = event
   sidebarData.value.event.optionName = 'Gestione Livelli Login'
   sidebarVisible.value = true
+}
+function hideSidebar() {
+  sidebarData.value = {
+    view: view,
+    event: {}
+  }
+  sidebarVisible.value = false
+  getViewData()
 }
 
 // DELETE OPTION

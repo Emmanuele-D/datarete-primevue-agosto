@@ -1,6 +1,6 @@
 <template>
-  <h2 class="mb-4" v-if="props.item">Modifica Ticket</h2>
-  <h2 class="mb-4" v-else>Crea Nuovo Ticket</h2>
+  <h1 class="mb-4" v-if="props.item">Modifica Ticket</h1>
+  <h1 class="mb-4" v-else>Crea Nuovo Ticket</h1>
   <div class="grid">
     <!-- <div class="col-12">
       {
@@ -22,6 +22,11 @@
       <div class="w-full flex flex-column align-items-start mb-4">
         <label class="mb-2" for="title">Titolo</label>
         <InputText v-model="tmpItem.titolo" class="w-full" id="title" placeholder="titolo"></InputText>
+      </div>
+      <div class="w-full flex flex-column align-items-start mb-4">
+        <label class="mb-2">Argomento</label>
+        <Dropdown v-model="tmpItem.argomento" class="w-full" placeholder="argomento" :options="argomentiOptions"
+          optionLabel="text" optionValue="value"></Dropdown>
       </div>
       <div class="w-full flex flex-column align-items-start mb-4">
         <label class="mb-2" for="description">Descrizione</label>
@@ -50,7 +55,12 @@ const props = defineProps({
 const emits = defineEmits('hide_newTicket')
 const tmpItem = ref({ ...props.item })
 
-
+const argomentiOptions = ref([
+  {
+    value: 1,
+    text: 'Argomento test'
+  }
+])
 
 // const prova = {
 //   "id": 0,
@@ -70,7 +80,6 @@ const servicePOST = new AxiosService('HelpDesk')
 const servicePUT = new AxiosService('HelpDesk')
 
 function save() {
-  console.log("DESPERATION , ", store.state.user.user.id)
   if (tmpItem.value.id) {
     servicePUT.update(tmpItem.value)
   } else {

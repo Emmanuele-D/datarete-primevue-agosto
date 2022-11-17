@@ -2,8 +2,37 @@
   <Toast />
 
   <h3>Nuovo Evento</h3>
-  <FormBuilderSimple v-model="values" :elements="elements" :config="config">
-  </FormBuilderSimple>
+
+  <div class="flex flex-column justify-content-start w-full mb-4">
+    <label>Nome Evento</label>
+    <InputText tyoe="text" v-model="tmpItem.title"></InputText>
+  </div>
+
+  <div class="flex flex-column justify-content-start w-full mb-4">
+    <label>Data inizio</label>
+    <Calendar dateFormat="dd-mm-yy" :showTime="true" :minDate="new Date()" v-model="tmpItem.start"></Calendar>
+  </div>
+
+  <div class="flex flex-column justify-content-start w-full mb-4">
+    <label>Data fine</label>
+    <Calendar dateFormat="dd-mm-yy" :showTime="true" :minDate="new Date()" v-model="tmpItem.end"></Calendar>
+  </div>
+
+  <div class="flex flex-column justify-content-start-w-full mb-4">
+    <label>Partecipanti</label>
+    <MultiSelect :options="props.sidebarData.userOptions" optionLabel="text" optionValue="value" v-model="partecipanti">
+    </MultiSelect>
+  </div>
+
+  <div class="flex flex-column justify-content-start w-full mb-4">
+    <label>Descrizione</label>
+    <Textarea tyoe="text" v-model="tmpItem.description" rows="5" cols="30"></Textarea>
+  </div>
+
+  <div class="flex justify-content end">
+    <Button label="Salva" @click="save"></Button>
+  </div>
+
 
 
 
@@ -12,7 +41,6 @@
 <script setup>
 import { ref } from 'vue'
 import AxiosService from '@/axiosServices/AxiosService';
-import FormBuilderSimple from '../FormBuilderSimple.vue';
 import { useToast } from "primevue/usetoast";
 const toast = useToast()
 // eslint-disable-next-line no-undef
@@ -33,113 +61,28 @@ const props = defineProps({
 //   }
 // }
 
-const config = {
-  rowGap: "20px",
-  columnGap: "18px",
-};
-
-let values = ref({
-});
-
-const elements = [
-  {
-    id: 'title',
-    label: "Nome Evento",
-    type: 'InputText',
-    attr: {
-      type: 'text'
-    },
-    size: [12, 12, 12],
-
-  },
-  {
-    id: 'start',
-    label: "Data Inizio",
-    type: 'Calendar',
-    attr: {
-      dateFormat: 'dd-mm-yy',
-      showTime: true
-    },
-    size: [12, 6, 6],
-    events: {
-      'date-select': setMinDate
-    },
-  },
-  {
-    id: 'end',
-    label: "Data Fine",
-    type: 'Calendar',
-    attr: {
-      dateFormat: 'dd-mm-yy',
-      showTime: true,
-      emmanuele: 'durante',
-      minDate: null
-    },
-    size: [12, 6, 6],
-
-  },
-  {
-    id: 'partecipanti',
-    label: 'Partecipanti',
-    type: 'MultiSelect',
-    attr: {
-      options: props.sidebarData.userOptions,
-      optionLabel: 'text',
-    },
-    size: [12, 12, 12],
-
-  },
-  {
-    id: 'description',
-    label: "Descrizione",
-    type: 'Textarea',
-    attr: {
-      rows: 5,
-      cols: 30
-    },
-    size: [12, 12, 12],
-
-  },
-  {
-    id: "formButton",
-    type: "Button",
-    size: [12, 12, 12],
-    align: "end",
-    newLine: true,
-    attr: {
-      label: "Salva",
-      icon: "pi pi-check",
-      iconPos: "right",
-    },
-    events: {
-      click: save,
-    },
-  },
-]
-
-
-function setMinDate(formEvent) {
-  getElement('end').attr.minDate = new Date(values.value[formEvent.id].toString())
-}
-
-function getElement(key) {
-  return elements.find((x) => {
-    return x.id === key;
-  });
-}
-
-// function log(formEvent) {
-//   // console.log("Log - ", getElement(formEvent.id).label, "- ", values.value[formEvent.id], "- ", formEvent.value);
-// }
+const tmpItem = ref({
+  title: '',
+  start: '',
+  end: '',
+  description: '',
+  partecipanti: []
+})
+const partecipanti = ref([])
 
 const servicePOST = new AxiosService('Calendar/AddEvent')
 const servicePUT = new AxiosService('Calendar/UpdateEvent')
 function save() {
 
-  if (values.value.id) {
-    delete values.value.source
-    console.log("🚀 ~ file: SidebarEventi.vue ~ line 144 ~ save ~ values.value", values.value)
-    servicePUT.updateCustomEndpoint('Calendar/UpdateEvent', values.value)
+
+  partecipanti.value.forEach(partecipante => {
+    tmpItem.value.partecipanti.push({
+      id_partecipente: partecipante
+    })
+  })
+
+  if (tmpItem.value.id) {
+    servicePUT.updateCustomEndpoint('Calendar/UpdateEvent', tmpItem.value)
       .then(() => {
         emit('event_refreshEvents')
         toast.add(
@@ -163,7 +106,7 @@ function save() {
         );
       })
   } else {
-    servicePOST.create(values.value)
+    servicePOST.create(tmpItem.value)
       .then(() => {
         emit('event_refreshEvents')
         toast.add(

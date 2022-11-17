@@ -21,19 +21,19 @@
 
     <div class="flex flex-column col-6 ">
       <label for="tipo-sede">Tipo Sede</label>
-      <Dropdown @change="populateTempItemFromTipoSede" id="tipo-sede" v-model="tempItem.idTipoSede"
-        :options="tipoSedeOptions" optionLabel="nome" optionValue="id" placeholder="Seleziona il tipo di Sede">
+      <Dropdown id="tipo-sede" v-model="tempItem.idTipoSede" :options="tipoSedeOptions" optionLabel="nome"
+        optionValue="id" placeholder="Seleziona il tipo di Sede">
       </Dropdown>
     </div>
 
     <div class="col-12">
       <ChooserGeography :nazioneSelected="tempItem.idNazione" :regioneSelected="tempItem.idRegione"
         :provinciaSelected="tempItem.idProvincia" :cittaSelected="tempItem.idCitta"
-        @event_geoFilter="populateTempItemFromGeoFilter"></ChooserGeography>
+        @event_geoFilter="populateTempItemFromGeoFilter($event, tempItem)"></ChooserGeography>
     </div>
 
     <div class="w-100 flex justify-content-end align-items-end col-12 col-md-2">
-      <Button label="Salva" @click="save"></Button>
+      <Button :loading="loading" label="Salva" @click="save"></Button>
     </div>
   </div>
 </template>
@@ -54,7 +54,7 @@ const toast = useToast()
 const servicePOST = new AxiosService(props.sidebarData.view.endpointPOST)
 const servicePUT = new AxiosService(props.sidebarData.view.endpointPUT)
 
-
+const loading = ref(false)
 
 function checkPut() {
   console.log('checkPut')
@@ -75,21 +75,19 @@ function checkPut() {
 }
 
 // GEO FILTER
-// function populateTempItemFromGeoFilter(event) {
-//   tempItem.value.idNazione = event.idNazione
-//   tempItem.value.idRegione = event.idRegione
-//   tempItem.value.idProvincia = event.idProvincia
-//   tempItem.value.idCitta = event.idCitta
-//   tempItem.value.Regione = event.Regione
-//   tempItem.value.Provincia = event.Provincia
-//   tempItem.value.Citta = event.Citta
-// }
-
-// TIPO SEDE
-function populateTempItemFromTipoSede(event) {
-  tempItem.value.idTipoSede = event.value.id
-  tempItem.value.TipoSede = event.value.nome
+function populateTempItemFromGeoFilter(event, item) {
+  console.log("🚀 ~ file: sbSediAzienda.vue ~ line 79 ~ populateTempItemFromGeoFilter ~ item", item)
+  console.log("🚀 ~ file: sbSediAzienda.vue ~ line 79 ~ populateTempItemFromGeoFilter ~ event", event)
+  item.idNazione = event.idNazione
+  item.idRegione = event.idRegione
+  item.idProvincia = event.idProvincia
+  item.idCitta = event.idCitta
+  item.Citta = event.Citta
+  item.Provincia = event.Provincia
+  item.Regione = event.Regione
 }
+
+
 
 // TIPI SEDE
 const tipoSedeOptions = ref([])
@@ -124,19 +122,24 @@ function getTipiSede() {
 const tempItem = ref({ ...props.sidebarData.event })
 // API CONNECTIONS
 function save() {
+  loading.value = true
   if (props.sidebarData.event.id) {
     servicePUT.update(tempItem.value)
       .then(res => {
         if (res) {
           toast.add({ severity: 'success', summary: 'Nuova Opzione Creata', detail: props.sidebarData.event.nome, life: 3000 });
           emits('event_refreshList')
-          emits('event_HideOptionsManager')
+          emits('event_HideSbSediAzienda')
         }
       })
       .catch(error => {
         toast.add({ severity: 'error', summary: "'Errore nella modifica dell'opzione", detail: error, life: 3000 });
         emits('event_refreshList')
-        emits('event_HideOptionsManager')
+        emits('event_HideSbSediAzienda')
+      })
+      .finally(() => {
+        loading.value = false
+        emits('event_HideSbSediAzienda')
       })
   } else {
     servicePOST.create(tempItem.value)
@@ -144,13 +147,17 @@ function save() {
         if (res) {
           toast.add({ severity: 'success', summary: 'Nuova Opzione Creata', detail: props.sidebarData.event.nome, life: 3000 });
           emits('event_refreshList')
-          emits('event_HideOptionsManager')
+          emits('event_HideSbSediAzienda')
         }
       })
       .catch(error => {
         toast.add({ severity: 'error', summary: "'Errore nella creazione dell'opzione", detail: error, life: 3000 });
         emits('event_refreshList')
-        emits('event_HideOptionsManager')
+        emits('event_HideSbSediAzienda')
+      })
+      .finally(() => {
+        loading.value = false
+        emits('event_HideSbSediAzienda')
       })
   }
 }

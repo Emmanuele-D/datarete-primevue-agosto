@@ -15,6 +15,8 @@ import router from "./router";
 
 import store from "./store";
 
+import firebaseMessaging from '../firebaseConfig'
+
 import "primevue/resources/themes/saga-blue/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
@@ -25,10 +27,24 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 import "./assets/scss/style.scss";
 
+import NotificationService from './utils/Notification.vue';
+
 import PrimeVueConfigurator from "./utils/PrimeVueConfigurator";
 import ConfirmationService from "primevue/confirmationservice";
 
-const app = createApp(App);
+const app = createApp({
+  extends: App,
+  mixins: [ NotificationService],
+  // components: {
+  //   Hello,
+  //   Thing,
+  // }
+});
+
+
+
+app.config.globalProperties.$messaging = firebaseMessaging;
+
 PrimeVueConfigurator.init(app);
 app.use(router);
 app.use(store);

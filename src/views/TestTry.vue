@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-4">
     <Toast />
 
     <div class="card">
@@ -23,6 +23,12 @@
     <Button label="Seleziona le persone" @click="iterateAndPaint(usersOrg)"></Button>
     <Button label="Deseleziona le persone" @click="iterateAndDePaint(usersOrg)" class="ml-4"></Button>
   </div>
+  <Divider />
+  <Divider />
+  <Divider />
+  <Divider />
+  <Divider />
+
 </template>
 
 <script setup>

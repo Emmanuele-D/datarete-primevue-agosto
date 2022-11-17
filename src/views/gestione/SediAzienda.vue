@@ -50,8 +50,8 @@
     </Card>
   </div>
   <Sidebar v-on:mouseenter="checkPut" v-model:visible="sidebarVisible" :baseZIndex="10000" position="right"
-    class="p-sidebar-md" @hide="$emit('event_HideSbSediAzienda')">
-    <sbSediAzienda :sidebarData="sidebarData">
+    class="p-sidebar-md" @hide="hideSidebar">
+    <sbSediAzienda :sidebarData="sidebarData" @event_HideSbSediAzienda="hideSidebar">
     </sbSediAzienda>
   </Sidebar>
 
@@ -60,7 +60,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-
+import { useConfirm } from "primevue/useconfirm";
 import sbSediAzienda from '@/components/sidebars/sbSediAzienda.vue';
 
 // import { useConfirm } from "primevue/useconfirm";
@@ -69,6 +69,8 @@ import { useToast } from 'primevue/usetoast'
 import AxiosService from '@/axiosServices/AxiosService';
 import TableSkeleton from '@/components/skeletons/TableSkeleton.vue';
 
+
+const confirm = useConfirm()
 const store = useStore()
 function setContentLoading_true() {
   store.dispatch('CONTENTLOADING_TRUE')
@@ -128,39 +130,40 @@ function hideSidebar() {
     view: view,
     event: {}
   }
+  getViewData()
 }
 
-// // DELETE OPTION
-// function confirmDelete(element) {
-//   confirm.require({
-//     message: 'Sei sicuro di voler eliminare "' + element.nome + '"',
-//     header: 'Conferma Eliminazione',
-//     icon: 'pi pi-fw pi-trash',
-//     acceptClass: 'p-button-danger',
-//     accept: () => {
-//       deleteStato(element)
-//     },
-//     reject: () => {
-//       return
-//     }
-//   })
-// }
-// const serviceDELETE = new AxiosService(view.endpointDELETE)
-// function deleteStato(element) {
-//   serviceDELETE.delete(element.id).
-//     then(res => {
-//       if (res) {
-//         toast.add({ severity: 'success', summary: 'Opzione Eliminata', detail: element.nome, life: 3000 });
-//         data.value ? data.value.length = 0 : null
-//         getViewData()
-//       }
-//     })
-//     .catch(error => {
-//       toast.add({ severity: 'error', summary: "Errore nell'eliminazione dell'opzione'", detail: error, life: 3000 });
-//       data.value ? data.value.length = 0 : null
-//       getViewData()
-//     })
-// }
+// DELETE OPTION
+function confirmDelete(element) {
+  confirm.require({
+    message: 'Sei sicuro di voler eliminare "' + element.nome + '"',
+    header: 'Conferma Eliminazione',
+    icon: 'pi pi-fw pi-trash',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      deleteStato(element)
+    },
+    reject: () => {
+      return
+    }
+  })
+}
+const serviceDELETE = new AxiosService(view.endpointDELETE)
+function deleteStato(element) {
+  serviceDELETE.delete(element.id).
+    then(res => {
+      if (res) {
+        toast.add({ severity: 'success', summary: 'Opzione Eliminata', detail: element.nome, life: 3000 });
+        data.value ? data.value.length = 0 : null
+        getViewData()
+      }
+    })
+    .catch(error => {
+      toast.add({ severity: 'error', summary: "Errore nell'eliminazione dell'opzione'", detail: error, life: 3000 });
+      data.value ? data.value.length = 0 : null
+      getViewData()
+    })
+}
 
 getViewData()
 </script>
