@@ -1,7 +1,7 @@
 <template>
   <footer class="layout_footer d-flex align-items-center">
     <span>
-      <strong>WHAPPY</strong> Enterprise Gamification Platform - Copyright
+      <strong>DATARETE</strong> Cloud Platform - Copyright
       &copy; 2022
     </span>
   </footer>
@@ -18,4 +18,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>

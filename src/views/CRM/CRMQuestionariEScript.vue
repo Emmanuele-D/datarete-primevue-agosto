@@ -3,6 +3,39 @@
   <div>
 
     <TabView>
+      <TabPanel header="Status">
+        <Card>
+          <template #content>
+            <Dropdown class="mb-4 w-full" v-model="statusSelected" :options="statusOptions" optionLabel="text"
+              placeholder="Seleziona lo Status" />
+
+            <Dropdown v-if="statusSelected && statusSelected.substatusOptions" class="mb-4 w-full"
+              v-model="substatusSelected" :options="statusSelected.substatusOptions" optionLabel="text"
+              placeholder="Seleziona il Sotto-Status" />
+            <Divider />
+
+            <div v-if="statusSelected" class="flex flex-column">
+              <div v-if="statusSelected.value == 4" class="flex flex-column">
+                <label>Data prossimo rinnovo</label>
+                <Calendar v-model="dataProssimoRinnovo" :minDate="new Date()"></Calendar>
+              </div>
+              <div v-if="statusSelected.value == 4" class="flex flex-column">
+                <label>Data ricontatto</label>
+                <Calendar v-model="dataProssimoRinnovo" :minDate="new Date()"></Calendar>
+              </div>
+            </div>
+
+            <div>
+              <label>Note</label>
+              <Textarea v-model="note"></Textarea>
+            </div>
+
+            <div class="w-full flex justify-content-end mt-2">
+              <Button :loading="loading" label="Salva"></Button>
+            </div>
+          </template>
+        </Card>
+      </TabPanel>
       <TabPanel header="Script">
         <Card style="height: 100%; overflow-y:scroll">
           <template #content>
@@ -145,6 +178,107 @@ function salvaQuestionarioComeNota() {
 }
 
 
-getScripts()
+const statusSelected = ref()
+const statusOptions = ref([
+  {
+    text: 'Da lavorare',
+    value: 1
+  },
+  {
+    text: 'In lavorazione',
+    value: 2
+  },
+  {
+    text: 'Fake',
+    value: 3,
+    substatusOptions: [
+      {
+        text: 'Numero inesistente',
+        value: 1
+      },
+      {
+        text: 'Anagrafica errata',
+        value: 2
+      }
+    ]
+  },
+  {
+    text: 'DPR',
+    value: 4,
+  },
+  {
+    text: 'Non fattibile',
+    value: 5,
+    substatusOptions: [
+      {
+        text: 'ATC non assumibile',
+        value: 1
+      },
+      {
+        text: 'Reddito non dimostrabile',
+        value: 2
+      },
+      {
+        text: 'Pensione non cedibile',
+        value: 3
+      },
+      {
+        text: 'Altra tipologia contratto',
+        value: 4
+      },
+      {
+        text: "Limite massimo d'età",
+        value: 5
+      },
+      {
+        text: 'Invalidità',
+        value: 6
+      }
+    ]
+  },
+  {
+    text: 'Non risponde',
+    value: 6,
+    substatusOptions: [
+      {
+        text: 'Messaggio inviato',
+        value: 1
+      }
+    ]
+  },
+  {
+    text: 'Da richiamare',
+    value: 7
+  },
+  {
+    text: 'Non interessato',
+    value: 8
+  },
+  {
+    text: 'Duplicato',
+    value: 9
+  },
+  {
+    text: 'Attesa documenti',
+    value: 10
+  },
+  {
+    text: 'Preventivo inviato',
+    value: 11
+  },
+  {
+    text: 'Preventivo non accettato',
+    value: 12
+  },
+  {
+    text: 'Preventivo accettato',
+    value: 13
+  },
+])
+
+const substatusSelected = ref()
+const substatusOptions =
+
+  getScripts()
 getQuestionari()
 </script>

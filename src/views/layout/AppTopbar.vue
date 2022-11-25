@@ -10,12 +10,14 @@
     <div class="ms-auto d-flex align-items-center">
       <span class="me-2">Ciao,
         <strong>{{
-        Object.keys(loggedUser).length != 0 ? loggedUser.nome : "User"
-        }}</strong></span>
-      <Button disabled class="p-button-sm p-button-secondary text-uppercase me-2 text-center"
-        style="min-width: 29px"><strong>{{
-        Object.keys(loggedUser).length != 0 ? loggedUser.nome.charAt(0) : "U"
-        }}</strong></Button>
+            (loggedUser).id ? loggedUser.nome : "User"
+        }}</strong>
+      </span>
+      <div class="grid-center">
+        <Avatar v-if="loggedUser.imgprofilo" class="mr-2" :image="loggedUser.imgprofilo"></Avatar>
+        <Avatar v-else class="mr-2" :label="(loggedUser).id ? loggedUser.nome.slice(0, 1) : 'U'"></Avatar>
+      </div>
+
       <Button class="p-button-sm p-button-secondary" @click="logout">LogOut</Button>
     </div>
   </div>
@@ -24,6 +26,8 @@
 <script>
 import { mapGetters } from "vuex";
 import { AUTH_LOGOUT } from "@/store/actions/auth";
+import Avatar from "primevue/avatar";
+import AxiosService from "@/axiosServices/AxiosService";
 export default {
   props: {
     showHamburger: Number,
@@ -33,13 +37,16 @@ export default {
       this.$emit("menu-toggle", event);
     },
     logout: function () {
+      const service = new AxiosService('Auth/Logout')
+      service.create().then(res => console.log(res)).catch(err => console.log(err))
       this.$store.dispatch(AUTH_LOGOUT).then(() => {
-        console.log("logout")
+        console.log("logout");
         this.$router.push("login");
       });
     },
   },
   computed: mapGetters(["loggedUser"]),
+  components: { Avatar }
 };
 </script>
 

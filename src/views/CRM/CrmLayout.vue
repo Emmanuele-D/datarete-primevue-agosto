@@ -1,14 +1,14 @@
 <template>
   <div class="wrapper grid">
-    <div class="col-3" style="height: 90vh; overflow-y:scroll">
+    <div v-if="showLeftSideMenu" class="col-3" style="height: 90vh; overflow-y:scroll">
       <CrmUser :currentCrm="currentCrm" @event_changeType="event_changeType"></CrmUser>
-      <CRMQuestionariEScript @reloadFeed="reloadFeed"></CRMQuestionariEScript>
+      <CRMQuestionariEScript v-if="showLeftSideMenu" @reloadFeed="reloadFeed"></CRMQuestionariEScript>
     </div>
-    <div class="col-6" style="overflow-y:scroll; height: 90vh">
+    <div class="col" style="overflow-y:scroll; height: 90vh">
       <CrmCreateNewItem @reloadFeed="reloadFeed" :newItemType="newItemType" class="mb-4"></CrmCreateNewItem>
       <CrmFeed :reloadFeed="doReloadFeed" :newItemType="newItemType" @feedReloaded="feedReloaded"></CrmFeed>
     </div>
-    <div class="col-3">
+    <div v-if="showRightSideMenu" class="col-3">
       <CrmSideMenu :currentCrm="currentCrm"></CrmSideMenu>
     </div>
   </div>
@@ -24,7 +24,17 @@ import CRMQuestionariEScript from './CRMQuestionariEScript.vue';
 import AxiosService from '@/axiosServices/AxiosService';
 import { useRoute } from 'vue-router'
 
-
+// eslint-disable-next-line no-undef
+const props = defineProps({
+  showLeftSideMenu: {
+    type: Boolean,
+    default: true
+  },
+  showRightSideMenu: {
+    type: Boolean,
+    default: true
+  }
+})
 const route = useRoute()
 
 const newItemType = ref(1)
@@ -43,7 +53,7 @@ function feedReloaded() {
 const currentCrm = ref()
 
 function getAnagrafica() {
-  const serviceGET = new AxiosService('Auth/Users/' + route.params.idAnagrafica)
+  const serviceGET = new AxiosService('Anagrafiche/Retail/' + route.params.idAnagrafica)
   serviceGET.read().then((res) => {
     currentCrm.value = res
   })

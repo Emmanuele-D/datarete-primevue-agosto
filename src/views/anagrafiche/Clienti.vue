@@ -1,11 +1,14 @@
 <template>
+  <ConfirmDialog></ConfirmDialog>
+  <Toast></Toast>
   <div class="wrapper">
     <h1>{{
-    pageTitle
+        pageTitle
     }}</h1>
     <TableBuilder @event_ShowSidebar_eye="goToCrm" @event_ShowSidebar_edit="showEditAnagrafica"
-      @event_ShowSidebar_nuovoAppuntamento="$router.push('/eventi')" @event_ShowSidebar_creaPratica="null"
-      @event_ShowSidebar_elimina="null" :data="tableItems" :headersConfig="columns" :config="config" :showAzioni="true">
+      @event_ShowSidebar_nuovoAppuntamento="$router.push('agenda/calendario')" @event_ShowSidebar_creaPratica="null"
+      @event_ShowSidebar_elimina="confirmDelete" :data="tableItems" :headersConfig="columns" :config="config"
+      :showAzioni="true">
     </TableBuilder>
     <Sidebar v-model:visible="sidebarClientiVisible" :baseZIndex="10000" position="right" class="p-sidebar-md">
       <SidebarClienti :sidebarData="sidebarClientiData">
@@ -31,6 +34,10 @@ import { useStore } from 'vuex'
 import router from '@/router'
 import axios from 'axios'
 import AxiosService from '../../axiosServices/AxiosService'
+import { useToast } from 'primevue/usetoast'
+import { useConfirm } from "primevue/useconfirm";
+
+
 
 // IMPORT COMPONENTS
 import TableBuilder from '../../components/TableBuilder.vue'
@@ -40,6 +47,8 @@ import SidebarClienti from '../../components/sidebars/SidebarClienti.vue'
 import NuovaAnagrafica from '../../components/sidebars/NuovaAnagrafica.vue'
 import SidebarEventi from '../../components/sidebars/SidebarEventi.vue'
 
+const confirm = useConfirm()
+const toast = useToast()
 // SET STORE UTILITIES
 const store = useStore()
 function setContentLoading_true() {
@@ -51,7 +60,7 @@ function setContentLoading_false() {
 
 // SET EVENTS
 // eslint-disable-next-line no-unused-vars, no-undef
-const emit = defineEmits(['event_Menubar_Inserisci'])
+const emit = defineEmits(['event_Menubar_Inserisci', 'event_ShowSidebar_elimina'])
 
 // SIDEBAR EVENTI
 const sidebarEventiVisible = ref(false)
@@ -207,6 +216,39 @@ function goToCrm(ev) {
 
   router.push('/crm/' + ev.ID)
 }
+
+function confirmDelete(element) {
+  confirm.require({
+    message: 'Sei sicuro di voler eliminare "' + element.NOME + " " + element.COGNOME + '"',
+    header: 'Conferma Eliminazione',
+    icon: 'pi pi-fw pi-trash',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      deleteRetail(element)
+    },
+    reject: () => {
+      return
+    }
+  })
+}
+
+function deleteRetail(element) {
+  const serviceDELETE = new AxiosService('Anagrafiche/DeleteRetail')
+  serviceDELETE.delete(element.id || element.ID).
+    then(res => {
+      if (res) {
+        toast.add({ severity: 'success', summary: 'Opzione Eliminata', detail: element.nome, life: 3000 });
+        tableItems.value ? tableItems.value.length = 0 : null
+        getTableItems()
+      }
+    })
+    .catch(error => {
+      toast.add({ severity: 'error', summary: "Errore nell'eliminazione dell'opzione'", detail: error, life: 3000 });
+      tableItems.value ? tableItems.value.length = 0 : null
+      getTableItems()
+    })
+}
+
 
 
 getViews()

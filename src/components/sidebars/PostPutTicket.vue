@@ -25,8 +25,8 @@
       </div>
       <div class="w-full flex flex-column align-items-start mb-4">
         <label class="mb-2">Argomento</label>
-        <Dropdown v-model="tmpItem.argomento" class="w-full" placeholder="argomento" :options="argomentiOptions"
-          optionLabel="text" optionValue="value"></Dropdown>
+        <Dropdown v-model="tmpItem.id_argomento" class="w-full" placeholder="argomento" :options="argomentiOptions"
+          optionLabel="nome" optionValue="id"></Dropdown>
       </div>
       <div class="w-full flex flex-column align-items-start mb-4">
         <label class="mb-2" for="description">Descrizione</label>
@@ -46,6 +46,7 @@
 import { ref } from 'vue';
 import store from '@/store';
 import AxiosService from '@/axiosServices/AxiosService';
+// eslint-disable-next-line no-undef
 const props = defineProps({
   item: Object,
   id_type: Number
@@ -55,13 +56,13 @@ const props = defineProps({
 const emits = defineEmits('hide_newTicket')
 const tmpItem = ref({ ...props.item })
 
-const argomentiOptions = ref([
-  {
-    value: 1,
-    text: 'Argomento test'
-  }
-])
+const argomentiOptions = ref([])
 
+function getArgomentiOptions() {
+  const service = new AxiosService('Options/ArgomentiTicket/' + props.id_type)
+  service.read().then(res => argomentiOptions.value = res)
+}
+getArgomentiOptions()
 // const prova = {
 //   "id": 0,
 //   "data": "2022-10-03T15:18:14.712Z",

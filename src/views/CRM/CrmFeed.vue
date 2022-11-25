@@ -42,9 +42,7 @@
     <div v-else>
       <Card>
         <template #content>
-          <div class="grid-center">
-            <i class="pi pi-spin pi-spinner"></i>
-          </div>
+
         </template>
       </Card>
     </div>

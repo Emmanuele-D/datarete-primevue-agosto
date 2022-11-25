@@ -19,6 +19,7 @@
 <script setup>
 import { ref } from 'vue'
 import ItemComponent from '@/components/DriveComponents/ItemComponent.vue';
+import AxiosService from '@/axiosServices/AxiosService';
 
 const selectedItem = ref()
 function selectItem(event) {
@@ -26,6 +27,13 @@ function selectItem(event) {
   selectedItem.value.clickedAt = new Date()
 }
 
+const folders = ref([])
+function getDriveFolders() {
+  const service = new AxiosService('Drive/GetFolders/1/')
+  service.read()
+    .then(res => folders.value = res)
+}
+getDriveFolders()
 const nodes =
   [{
     "key": "0",

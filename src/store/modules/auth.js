@@ -3,6 +3,7 @@ import {
   AUTH_ERROR,
   AUTH_SUCCESS,
   AUTH_LOGOUT,
+  SET_LOGIN_LEVELS,
 } from "../actions/auth";
 import { USER_REQUEST } from "../actions/user";
 import axios from "axios";
@@ -11,12 +12,14 @@ const state = {
   token: localStorage.getItem("DR_P-user-token") || "",
   IdUser: localStorage.getItem("DR_P-user-id") || "",
   status: "",
+  livelliLogin: [],
   hasLoadedOnce: false,
 };
 
 const getters = {
   isAuthenticated: (state) => !!state.token,
   authStatus: (state) => state.status,
+  getLivelliLogin: (state) => state.livelliLogin,
 };
 
 const actions = {
@@ -28,6 +31,7 @@ const actions = {
         .then((resp) => {
           if (resp.data.Success) {
             console.log("/Auth RESP", resp);
+            commit(SET_LOGIN_LEVELS, resp.data.livelli);
             localStorage.setItem("DR_P-user-token", resp.data.Token);
             localStorage.setItem("DR_P-user-id", resp.data.IdUser);
             axios.defaults.headers.common["Authorization"] = resp.data.Token;
@@ -53,6 +57,7 @@ const actions = {
     return new Promise((resolve) => {
       commit(AUTH_LOGOUT);
       localStorage.removeItem("DR_P-user-token");
+      localStorage.removeItem("DR_P-user-id");
       delete axios.defaults.headers.common["Authorization"];
       resolve();
     });
@@ -75,6 +80,13 @@ const mutations = {
   },
   [AUTH_LOGOUT]: (state) => {
     state.token = "";
+    state.IdUser = null;
+    state.livelliLogin.splice(0);
+  },
+  [SET_LOGIN_LEVELS]: (state, payload) => {
+    console.log("PAYLOAD EXPECT LIVELLI LOGIN", payload);
+    state.livelliLogin = payload;
+    console.log("STATE.LIVELLIlOGIN , ", state.livelliLogin);
   },
 };
 

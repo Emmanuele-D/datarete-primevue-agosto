@@ -11,7 +11,7 @@
         <Textarea v-model="newMessage.message"></Textarea>
       </div>
       <div class="flex flex-column justify-content-around align-items-center">
-        <FileUpload @uploader="uploadFile" :disabled="newMessage.files.length>0" :fileLimit="1" mode="basic"
+        <FileUpload @uploader="uploadFile" :disabled="newMessage.files.length > 0" :fileLimit="1" mode="basic"
           uploadIcon="pi pi-paperclip" name="demo[]" :customUpload="true" :previewWidth="50" :maxFileSize="1000000"
           :chooseLabel="newMessage.files.length.toString()" :auto='true' />
 
@@ -20,6 +20,9 @@
         <i v-else @click="sendMessage" role="button" style="font-size:1.5rem" class="pi pi-spin pi-spinner"></i>
       </div>
 
+    </div>
+    <div class="flex justify-content-center w-full p-2">
+      <Button icon="pi pi-check" label="Chiudi ticket"></Button>
     </div>
   </div>
 </template>

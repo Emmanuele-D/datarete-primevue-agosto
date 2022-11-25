@@ -1,6 +1,6 @@
 import { USER_REQUEST, USER_ERROR, USER_SUCCESS } from "../actions/user";
 import { AUTH_LOGOUT } from "../actions/auth";
-import auth from "./auth";
+
 import axios from "axios";
 
 const state = {
@@ -18,8 +18,9 @@ const actions = {
   [USER_REQUEST]: ({ commit, dispatch }) => {
     commit(USER_REQUEST);
     axios
-      .get("Auth/Users/" + auth.state.IdUser)
+      .get("Auth/Users/" + localStorage.getItem("DR_P-user-id"))
       .then((resp) => {
+        console.log("🚀 ~ file: user.js ~ line 23 ~ .then ~ resp", resp.data);
         commit(USER_SUCCESS, resp.data);
       })
       .catch(() => {
@@ -35,6 +36,7 @@ const mutations = {
     state.status = "loading";
   },
   [USER_SUCCESS]: (state, resp) => {
+    console.log("🚀 ~ file: user.js ~ line 39 ~ state", state);
     state.status = "success";
     state.user = resp;
     state.loaded = true;

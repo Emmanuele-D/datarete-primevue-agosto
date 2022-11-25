@@ -1,4 +1,6 @@
 <template>
+  <ConfirmDialog></ConfirmDialog>
+  <Toast></Toast>
   <div class="wrapper">
     <h1>Circolari</h1>
 
@@ -13,7 +15,7 @@
 
       <div class=" flex justify-content-between align-items-center  mb-4">
 
-        <Card class="w-100">
+        <Card v-if="inserimento" class="w-100">
           <template #content>
             <div class="w-100 flex justify-content-end align-items-center">
 
@@ -72,15 +74,19 @@
               <Column field="linkDocumento" header="DOCUMENTO">
 
                 <template #body="{ data }">
-                  <Button v-if="data.urlFile.length != 0" icon="pi pi-file" @click="showDocumento(data.urlFile)"
+                  <Button v-if="data.urlFile.length != 0" icon="pi pi-file" @click="showDocumento(data)"
                     class="p-button-rounded p-button-text ml-4" />
 
                 </template>
               </Column>
-              <Column field="linkDocumento" header="VISUALIZZAZIONI">
+              <Column field="azioni" header="AZIONI">
                 <template #body="{ data }">
-                  <Button icon="pi pi-fw pi-eye" @click="showCircolari"
-                    class="p-button-rounded p-button-text ml-4"></Button>
+                  <Button v-if="modifica" icon="pi pi-fw pi-eye" @click="showCircolari(data)"
+                    class="p-button-rounded p-button-outlined"></Button>
+                  <Button v-if="modifica" @click="showNuovaCircolare(data)" icon="pi pi-fw pi-pencil"
+                    class="p-button-rounded p-button-outlined  ml-4"></Button>
+                  <Button v-if="eliminazione" @click="confirmDelete(data)" icon="pi pi-fw pi-trash"
+                    class="p-button-rounded p-button-outlined p-button-danger ml-4"></Button>
                 </template>
               </Column>
             </DataTable>
@@ -92,11 +98,15 @@
   <Dialog header="Visualizzatore documenti by ArkadiaGroup" v-model:visible="showDialogDocumento"
     :breakpoints="{ '960px': '75vw', '640px': '90vw' }" :style="{ width: '50vw', height: '60vh' }" :maximizable="true"
     :modal="true">
-    <iframe :src="currentLinkCircolare" frameBorder="0" scrolling="auto" width="100%" height="95%"></iframe>
+    <iframe :src="currentCircolare" frameBorder="0" scrolling="auto" width="100%" height="95%"></iframe>
+    <div class="f-full flex justify-content-end">
+      <Button @click="confermaLettura" :disabled="conferma.value" :icon="'pi ' + conferma.icon"
+        label="Confermo lettura della circolare"></Button>
+    </div>
   </Dialog>
   <Sidebar v-model:visible="circolariVisible" :baseZIndex="10000" position="right" class="p-sidebar-md"
     @hide="$emit('event_HideCircolari')">
-    <CircolariViste></CircolariViste>
+    <CircolariViste :sidebarData="circolariData"></CircolariViste>
   </Sidebar>
   <Sidebar v-model:visible="nuovaCircolareVisible" :baseZIndex="10000" position="right" class="p-sidebar-md">
     <NuovaCircolare @event_HideNuovaCircolare="event_HideNuovaCircolare" :sidebarData="nuovaCircolareData">
@@ -113,26 +123,61 @@ import TableSkeleton from '../../components/skeletons/TableSkeleton.vue';
 import CircolariViste from '@/components/sidebars/CircolariViste.vue';
 import AxiosService from '@/axiosServices/AxiosService';
 import NuovaCircolare from '@/components/sidebars/NuovaCircolare.vue';
+import { AUTH_LOGOUT } from '@/store/actions/auth';
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from 'primevue/usetoast';
+const toast = useToast()
+const confirm = useConfirm()
 
 const store = useStore()
 
+
+const visualizzazione = ref(false)
+const modifica = ref(false)
+const inserimento = ref(false)
+const eliminazione = ref(false)
+
+
 const contentLoading = computed(() => store.getters.contentLoading)
 
+const serviceAuthPage = new AxiosService('Authorizations/GetUserAuthorizationForComponent/2')
+serviceAuthPage.read()
+  .then(res => {
+    if (res.validSession) {
+      visualizzazione.value = res.visualizzazione
+      modifica.value = res.modifica
+      inserimento.value = res.inserimento
+      eliminazione.value = res.eliminazione
+    } else {
+      logout()
+    }
+  })
+
+function logout() {
+  const service = new AxiosService('Auth/Logout')
+  service.create().then(res => console.log(res)).catch(err => console.log(err))
+  this.$store.dispatch(AUTH_LOGOUT).then(() => {
+    console.log("logout");
+    this.$router.push("login");
+  });
+}
 
 // GET LIST CIRCOLARI
-const serviceGET = new AxiosService('Circolari/GetCircolari?idCurrentLevel=')
+const serviceGET = new AxiosService('Circolari/GetCircolari')
 function getViewData() {
-  serviceGET.readCustomEndpoint('Circolari/GetCircolari?idCurrentLevel=' + 1)
+  data.value.splice(0)
+  serviceGET.read()
     .then(res => {
-      data.value.length > 0 ? data.value.splice(0) : null
       data.value = res
     })
+    .catch(err => console.log(err))
 }
 
 // SIDEBAR NUOVA CIRCOLARE
 const nuovaCircolareData = ref({})
 const nuovaCircolareVisible = ref(false)
-function showNuovaCircolare() {
+function showNuovaCircolare(event) {
+  event ? nuovaCircolareData.value = event : null
   nuovaCircolareVisible.value = true
 }
 
@@ -145,8 +190,11 @@ function event_HideNuovaCircolare() {
 
 //SIDEBAR VISTE CIRCOLARE
 const circolariVisible = ref(false)
-function showCircolari() {
+const circolariData = ref({})
+function showCircolari(event) {
+  console.log("🚀 ~ file: Circolari.vue ~ line 195 ~ showCircolari ~ event", event)
   circolariVisible.value = true
+  circolariData.value = event
 }
 
 const dt = ref();
@@ -156,11 +204,12 @@ const exportCSV = () => {
 
 const data = ref([])
 
-const currentLinkCircolare = ref('')
+const currentCircolare = ref()
 const showDialogDocumento = ref(false)
-function showDocumento(link) {
-  currentLinkCircolare.value = ''
-  currentLinkCircolare.value = 'https://posadas-core.datarete.cloud/' + link
+function showDocumento(circolare) {
+  currentCircolare.value = { ...circolare }
+  currentCircolare.value.url = ''
+  currentCircolare.value.url = 'https://posadas-core.datarete.cloud/' + circolare.urlFile
   showDialogDocumento.value = true
 }
 
@@ -182,6 +231,47 @@ function formatTime(value) {
   }
 }
 
+function confirmDelete(element) {
+  confirm.require({
+    message: 'Sei sicuro di voler eliminare "' + element.nome + '"',
+    header: 'Conferma Eliminazione',
+    icon: 'pi pi-fw pi-trash',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      deleteItem(element)
+    },
+    reject: () => {
+      return
+    }
+  })
+}
+
+const serviceDELETE = new AxiosService('Circolari/DeleteCircolare')
+function deleteItem(element) {
+  serviceDELETE.delete(element.id).
+    then(res => {
+      if (res) {
+        toast.add({ severity: 'success', summary: 'Opzione Eliminata', detail: element.nome, life: 3000 });
+        getViewData()
+      }
+    })
+    .catch(error => {
+      toast.add({ severity: 'error', summary: "Errore nell'eliminazione dell'opzione'", detail: error, life: 3000 });
+      getViewData()
+    })
+}
+
+const conferma = ref({
+  value: false,
+  icon: 'pi-eye'
+})
+
+function confermaLettura() {
+  conferma.value.value = true
+  conferma.value.icon = 'pi-check'
+  const service = new AxiosService('Circolari/LettaCircolare')
+  service.update(currentCircolare.value)
+}
 
 getViewData()
 </script>

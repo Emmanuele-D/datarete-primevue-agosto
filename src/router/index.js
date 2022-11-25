@@ -42,14 +42,19 @@ const router = createRouter({
       component: AppLayout,
       children: [
         {
-          path: "/testtry",
+          path: "/testtry1",
           name: "test",
           component: () => import("@/views/TestTry.vue"),
         },
         {
           path: "/testtry2",
-          name: "test",
+          name: "test2",
           component: () => import("@/views/TestTry2.vue"),
+        },
+        {
+          path: "testtry3",
+          name: "test3",
+          component: () => import("@/views/Testtry3.vue"),
         },
         {
           path: "",
@@ -124,6 +129,12 @@ const router = createRouter({
               component: () => import("@/views/anagrafiche/Lead.vue"),
               meta: {
                 title: "DataRete - Lead",
+              },
+            },
+            {
+              path: "agenda/calendario",
+              redirect: {
+                name: "calendario",
               },
             },
           ],
@@ -213,6 +224,18 @@ const router = createRouter({
           path: "gestione",
           name: "gestione",
           children: [
+            {
+              path: "modelli-mail",
+              component: () => import("@/views/gestione/ModelliMail.vue"),
+            },
+            {
+              path: "modelli-sms",
+              component: () => import("@/views/gestione/ModelliSMS.vue"),
+            },
+            {
+              path: "modelli-wa",
+              component: () => import("@/views/gestione/ModelliWA.vue"),
+            },
             {
               path: "stati-pratica",
               component: () => import("@/views/gestione/StatiPratica.vue"),

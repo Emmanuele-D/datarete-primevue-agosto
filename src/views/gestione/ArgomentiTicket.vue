@@ -23,7 +23,16 @@
               {{ data.nome }}
             </template>
           </Column>
-
+          <Column field="HelpDesk" header="HelpDesk">
+            <template #body="{ data }">
+              <Chip class="mr-2 px-3" :label="data.helpdesk"></Chip>
+            </template>
+          </Column>
+          <Column field="utentiName" header="Utenti di riferimento">
+            <template #body="{ data }">
+              {{ data.utentiName.slice(0, data.utentiName.length - 1) }}
+            </template>
+          </Column>
           <Column header="Azioni" style="max-width: 200px">
             <template #body="{ data }">
               <Button @click="showSidebar(data)" icon="pi pi-fw pi-pencil"
@@ -38,7 +47,7 @@
   </div>
   <Sidebar v-model:visible="sidebarVisible" :baseZIndex="10000" position="right" class="p-sidebar-md"
     @hide="$emit('event_HideOptionsManager')">
-    <SbArgomentiTicket :sidebarData="sidebarData">
+    <SbArgomentiTicket :sidebarData="sidebarData" @event_refreshList="hideSidebar">
     </SbArgomentiTicket>
   </Sidebar>
 
@@ -73,7 +82,7 @@ const data = ref()
 function getViewData() {
   const serviceGET = new AxiosService(view.endpointGET)
   setContentLoading_true()
-  serviceGET.read()
+  serviceGET.readCustomEndpoint(view.endpointGET + '/0')
     .then(res => {
       if (res) {
         data.value ? data.value.length = 0 : null
@@ -136,10 +145,10 @@ function geoFilter() {
 // SETTING VIEW
 const view = {
   title: 'Argomenti Ticket',
-  // endpointGET: 'Options/Citta',
-  // endpointPOST: 'Options/Citta',
-  // endpointPUT: 'Options/Citta', // /ID
-  // endpointDELETE: 'Options/Citta' // /ID
+  endpointGET: 'Options/ArgomentiTicket',
+  endpointPOST: 'Options/ArgomentiTicket',
+  endpointPUT: 'Options/ArgomentiTicket', // /ID
+  endpointDELETE: 'Options/ArgomentiTicket' // /ID
 }
 
 // SETTINGS AND DYNAMICS SIDEBAR
@@ -149,10 +158,18 @@ const sidebarData = ref({
   event: {}
 })
 function showSidebar(event) {
+  console.log("🚀 ~ file: ArgomentiTicket.vue ~ line 152 ~ showSidebar ~ event", event)
   sidebarData.value.event = {
     ...event,
   }
+  sidebarData.value.view = view
   sidebarVisible.value = true
+}
+
+function hideSidebar() {
+  sidebarData.value = {}
+  sidebarVisible.value = false
+  getViewData()
 }
 
 // DELETE OPTION

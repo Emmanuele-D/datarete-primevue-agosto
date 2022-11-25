@@ -14,19 +14,19 @@
           :scroll="true" table-layout="auto" ref="dt">
 
           <Column header="DATA" field="data">
-            <template #body="{data}">
+            <template #body="{ data }">
               {{ formatDate(data.data) }}
             </template>
           </Column>
-          <Column header="TIPO" field="type_text">
-            <template #body="{data}">
-              <Chip class="small-chip" :label="data.type_text"></Chip>
+          <Column header="ARGOMENTO" field="argomento_text">
+            <template #body="{ data }">
+              <Chip class="small-chip" :label="data.argomento_text"></Chip>
             </template>
           </Column>
           <Column header="TITOLO" field="titolo"></Column>
           <Column header="AUTORE" field="created_by_string"></Column>
           <Column header="STATO" field="status_text">
-            <template #body="{data}">
+            <template #body="{ data }">
               <div class="flex flex-column align-items-center w-100">
                 <i v-if="data.id_status == 0" style="color:dimgray" class="pi pi-fw pi-circle-fill"></i>
                 <i v-if="data.id_status == 4" style="color:darkseagreen" class="pi pi-fw pi-circle-fill"></i>
@@ -36,16 +36,8 @@
               </div>
             </template>
           </Column>
-          <Column header="DA RISPONDERE" field="need_reply">
-            <template #body="{data}">
-              <div class="flex flex-column align-items-center w-100">
-                <i v-if="data.need_reply" class="pi pi-fw pi-check"></i>
-                <i v-if="!data.need_reply" class="pi pi-fw pi-times"></i>
-              </div>
-            </template>
-          </Column>
           <Column header="CHAT">
-            <template #body="{data}">
+            <template #body="{ data }">
               <div class="flex flex-column align-items-center w-100">
                 <i @click="showChat(data)" role="button" class="pi pi-fw pi-comment"></i>
               </div>
@@ -60,9 +52,11 @@
     <template #header>
 
       <div class="flex justify-content-start align-items-center">
-        <Avatar icon="pi pi-user" size="large" class="mr-4"></Avatar>
+        <Avatar v-if="chatData.created_by_avatar" :image="chatData.created_by_avatar" size="large" class="mr-4">
+        </Avatar>
+        <Avatar v-else icon="pi pi-user" size="large" class="mr-4"></Avatar>
         <div class="flex flex-column justify-content-center">
-          <h4 style="margin:0">{{chatData.created_by_string}}</h4>
+          <h4 style="margin:0">{{ chatData.created_by_string }}</h4>
           <h5 style="margin:0">{{ chatData.titolo }}</h5>
         </div>
       </div>
@@ -90,8 +84,10 @@ function showChat(e) {
   chatData.value = e
   chatVisible.value = true
 }
-function hideChat() {
+function hideSidebar() {
+  data.value.splice(0)
   chatVisible.value = false
+  getViewData()
 }
 
 

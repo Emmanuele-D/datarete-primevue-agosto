@@ -1,69 +1,65 @@
 <template>
-
   <div class="wrapper">
+
     <ConfirmDialog></ConfirmDialog>
-    <h1>{{ view.title }}</h1>
-    <Card>
+
+
+    <h1>Stati Pratiche</h1>
+
+    <Card class="mb-4">
       <template #content>
         <div class="flex justify-content-end">
-          <Button label="Aggiungi Opzione" @click="showSidebar({})" class="p-button=info"></Button>
+          <Button label="Nuovo Stato Anagrafiche" @click="showSidebar({})" class="p-button-info"></Button>
         </div>
       </template>
     </Card>
-    <Card>
+
+    <Card class="mb-4">
       <template #content>
-        <div v-if="contentLoading">
-          <TableSkeleton></TableSkeleton>
+        <div v-if="contentLoading" class="content-loading">
+          <Skeleton></Skeleton>
         </div>
-        <DataTable v-else :value="data" :stripedRows="true" :paginator="true" :rows="10" :resizableColumns="true"
-          :scrollable="true" table-layout="auto" ref="dt">
-          <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field"
-            :sortable="col.sortable">
+        <div v-else>
+          <VueDraggableNext class="dragArea list-group" :list="statiAnagrafiche" @change="dragged($event)">
+            <div class="list-group-item" v-for="element in statiAnagrafiche" :key="element.id">
+              <div>
+                <Chip v-if="element.displayLead" label="Lead" icon="pi pi-flag" class="mr-2 mb-2 custom-chip" />
+                <Chip v-if="element.displayCliente" label="Cliente" icon="pi pi-users" class="mr-2 mb-2 custom-chip" />
 
-            <template #body="{ data }">
-              <div v-if="col.field == 'imgprofilo'">
-                <Avatar :image="data[col.field]" size="xlarge" shape="circle"></Avatar>
+
+                <span>{{ element.nome }}</span>
               </div>
-              <div v-else-if="col.field == 'attivo'" class="grid-center w-full">
-                <i v-if="data.attivo" class="pi pi-fw pi-check-circle" style="color:darkgreen"></i>
-                <i v-else class="pi pi-fw pi-times-circle" style="color:brown"></i>
+              <div>
+                <Button @click="showSidebar(element)" icon="pi pi-fw pi-pencil"
+                  class="mr-2 p-button-rounded p-button-info"></Button>
+                <Button @click="confirmDelete(element)" icon="pi pi-fw pi-trash"
+                  class="p-button-rounded p-button-danger"></Button>
               </div>
-              <div v-else>
-                {{ data[col.field] }}
-              </div>
-
-            </template>
-
-          </Column>
-
-          <Column header="Azioni" style="max-width: 200px">
-            <template #body="{ data }">
-              <Button @click="showSidebar(data)" icon="pi pi-fw pi-pencil"
-                class="mr-2 p-button-rounded p-button-info"></Button>
-              <Button @click="confirmDelete(data)" icon="pi pi-fw pi-trash"
-                class="p-button-rounded p-button-danger"></Button>
-            </template>
-          </Column>
-        </DataTable>
+            </div>
+          </VueDraggableNext>
+        </div>
       </template>
     </Card>
+
+    <Sidebar v-model:visible="sidebarVisible" :baseZIndex="10000" position="right" class="p-sidebar-md"
+      @hide="$emit('event_hideSidebar')">
+
+      <StatoAnagrafica :sidebarData="sidebarData"></StatoAnagrafica>
+    </Sidebar>
+
+
   </div>
-  <Sidebar v-model:visible="sidebarVisible" :baseZIndex="10000" position="right" class="p-sidebar-md"
-    @hide="$emit('event_HideOptionsManager')">
-    <OptionsManager :sidebarData="sidebarData">
-    </OptionsManager>
-  </Sidebar>
 </template>
 
-<script setup>
+<script setup >
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from 'primevue/usetoast'
 
 import AxiosService from '@/axiosServices/AxiosService';
-import TableSkeleton from '@/components/skeletons/TableSkeleton.vue';
-import OptionsManager from '@/components/sidebars/OptionsManager.vue';
+import { VueDraggableNext } from 'vue-draggable-next'
+import StatoAnagrafica from '../../components/sidebars/StatoAnagrafica.vue'
 
 const store = useStore()
 function setContentLoading_true() {
@@ -77,70 +73,6 @@ const contentLoading = computed(() => store.getters.contentLoading)
 const confirm = useConfirm()
 const toast = useToast()
 
-const data = ref([
-  {
-    id: 1,
-    tipo_prodotto: 'Prestito',
-    nome: 'bg85',
-    ordine: 1,
-    tabella_riferimento: 'Bozze'
-  }
-])
-
-const columns = [
-  { field: 'tipo_prodotto', header: 'TIPO PRODOTTO', sortable: false },
-  { field: 'nome', header: 'NOME', sortable: true },
-  { field: 'ordine', header: 'ORDINE', sortable: true },
-  { field: 'tabella_riferimento', header: 'TABELLA DI RIFERIMENTO', sortable: true },
-]
-
-// GET DATA FOR THE VIEW
-function getViewData() {
-  const serviceGET = new AxiosService(view.endpointGET)
-  setContentLoading_true()
-  serviceGET.read()
-    .then(res => {
-      if (res) {
-        data.value ? data.value.length = 0 : null
-        data.value = res
-        toast.add({ severity: 'success', summary: 'Lista Opzioni Caricata', life: 3000 });
-        setContentLoading_false()
-      }
-    })
-    .catch(err => {
-      toast.add({ severity: 'error', summary: 'Errore nel caricamento della lista delle Opzioni', detail: err, life: 3000 });
-      setContentLoading_false()
-    })
-}
-
-// SETTING VIEW
-const view = {
-  title: 'Stati Pratica',
-  // endpointGET: 'Options/Sesso',
-  // endpointPOST: 'Options/Sesso',
-  // endpointPUT: 'Options/Sesso', // /ID
-  // endpointDELETE: 'Options/Sesso' // /ID
-}
-
-// SETTINGS AND DYNAMICS SIDEBAR
-const sidebarVisible = ref(false)
-const sidebarData = ref({
-  view: view,
-  event: {}
-})
-function showSidebar(event) {
-  sidebarData.value.event = event
-  sidebarVisible.value = true
-}
-function hideSidebar() {
-  sidebarVisible.value = false
-  sidebarData.value = {
-    view: view,
-    event: {}
-  }
-}
-
-// DELETE OPTION
 function confirmDelete(element) {
   confirm.require({
     message: 'Sei sicuro di voler eliminare "' + element.nome + '"',
@@ -155,22 +87,51 @@ function confirmDelete(element) {
     }
   })
 }
-const serviceDELETE = new AxiosService(view.endpointDELETE)
+
+const serviceDELETE = new AxiosService('Options/StatiAnagrafiche/DeleteStato')
 function deleteStato(element) {
   serviceDELETE.delete(element.id).
     then(res => {
       if (res) {
-        toast.add({ severity: 'success', summary: 'Opzione Eliminata', detail: element.nome, life: 3000 });
-        data.value ? data.value.length = 0 : null
-        getViewData()
+        toast.add({ severity: 'success', summary: 'Stato Eliminato', detail: element.nome, life: 3000 });
+        getData()
       }
     })
     .catch(error => {
-      toast.add({ severity: 'error', summary: "Errore nell'eliminazione dell'opzione'", detail: error, life: 3000 });
-      data.value ? data.value.length = 0 : null
-      getViewData()
+      toast.add({ severity: 'error', summary: "Errore nell'eliminazione dello stato", detail: error, life: 3000 });
+      getData()
     })
 }
 
-getViewData()
+
+const sidebarVisible = ref(false)
+const sidebarData = ref()
+function showSidebar(event) {
+  sidebarVisible.value = true
+  sidebarData.value = event
+}
+function hideSidebar() {
+  sidebarVisible.value = false
+  sidebarData.value = {}
+}
+
+const serviceGET = new AxiosService('Options/StatiAnagrafiche/GetStati')
+const statiAnagrafiche = ref()
+
+function getData() {
+  setContentLoading_true()
+  serviceGET.read()
+    .then(res => {
+      statiAnagrafiche.value = res
+      setContentLoading_false()
+    })
+}
+
+function dragged(event) {
+  console.log("🚀 ~ file: StatiAnagrafica.vue ~ line 49 ~ dragged ~ event", event)
+}
+
+
+getData()
+
 </script>

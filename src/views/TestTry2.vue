@@ -1,9 +1,5 @@
 <template>
   <div class="wrapper">
-    <div class="mb-4 plugin-title flex justify-content-between align-items-center">
-      <h1>Checklist documentale</h1>
-      <Chip icon="pi pi-exclamation-circle" label="testing" class="small-chip "></Chip>
-    </div>
 
     <div v-for="item of data" :key="item.id">
 

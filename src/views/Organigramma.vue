@@ -7,15 +7,17 @@
       <OrganizationChart @node-select="nodeSelected" style="overflow-x:scroll" v-if="usersOrg" :value="usersOrg"
         :collapsible="true" class="company" selectionMode="single" v-model:selectionKeys="selection">
         <template #person="slotProps">
-          <div class="node-header ui-corner-top">{{slotProps.node.data.label}}</div>
+          <div class="node-header ui-corner-top">{{ slotProps.node.data.label }}</div>
           <div class="node-content">
-            <img v-if="slotProps.node.data.imgprofilo" :src='slotProps.node.data.imgprofilo' width="32"
-              style="width:40px; height: 40px; border-radius: 50%; ">
-            <div>{{slotProps.node.data.name}}</div>
+
+            <Avatar v-if="slotProps.node.data.imgprofilo" :image="slotProps.node.data.imgprofilo" class="mr-2"
+              shape="circle" />
+            <Avatar v-else icon="pi pi-user" class="mr-2 mb-2" shape="circle" />
+            <div>{{ slotProps.node.data.name }}</div>
           </div>
         </template>
         <template #default="slotProps">
-          <span>{{slotProps.node.data.label}}</span>
+          <span>{{ slotProps.node.data.label }}</span>
         </template>
       </OrganizationChart>
     </div>

@@ -12,21 +12,21 @@
 
     <div class="flex flex-column col-12">
       <label>A quale HelpDesk appartiene</label>
-      <Dropdown v-model="tempItem.tipoHelpDesk" :options="tipisedeOptions" optionValue="value" optionLabel="text">
+      <Dropdown v-model="tempItem.id_helpedesk" :options="tipisedeOptions" optionValue="value" optionLabel="text">
       </Dropdown>
     </div>
 
 
     <div class="flex flex-column col-12 ">
       <label for="tipo-sede">Utente di riferimento</label>
-      <MultiSelect id="tipo-sede" v-model="tempItem.utenteDiRiferimetno" :options="utentiOptions" optionLabel="text"
+      <MultiSelect id="tipo-sede" v-model="tempItem.utenti" :options="utentiOptions" optionLabel="text"
         optionValue="value">
       </MultiSelect>
     </div>
 
 
     <div class="w-100 flex justify-content-end align-items-end col-12 ">
-      <Button label="Salva" @click="save"></Button>
+      <Button :loading="loading" label="Salva" @click="save"></Button>
     </div>
   </div>
 </template>
@@ -52,37 +52,45 @@ const loading = ref(false)
 
 const tempItem = ref({
   nome: '',
-  tipoHelpDesk: 0,
-  utenteDiRiferimetno: []
+  id_helpedesk: 0,
+  utenti: []
 })
 props.sidebarData.event ? tempItem.value = { ...props.sidebarData.event } : null
 // API CONNECTIONS
 function save() {
+  loading.value = true
   if (props.sidebarData.event.id) {
     servicePUT.update(tempItem.value)
       .then(res => {
         if (res) {
           toast.add({ severity: 'success', summary: 'Nuova Opzione Creata', detail: props.sidebarData.event.nome, life: 3000 });
-          emits('event_refreshList')
-          emits('event_HidesbArgomentiTicket')
+
         }
       })
       .catch(error => {
         toast.add({ severity: 'error', summary: "'Errore nella modifica dell'opzione", detail: error, life: 3000 });
+
+      })
+      .finally(() => {
+        loading.value = false
         emits('event_refreshList')
         emits('event_HidesbArgomentiTicket')
       })
   } else {
+    loading.value = true
     servicePOST.create(tempItem.value)
       .then(res => {
         if (res) {
           toast.add({ severity: 'success', summary: 'Nuova Opzione Creata', detail: props.sidebarData.event.nome, life: 3000 });
-          emits('event_refreshList')
-          emits('event_HidesbArgomentiTicket')
+
         }
       })
       .catch(error => {
         toast.add({ severity: 'error', summary: "'Errore nella creazione dell'opzione", detail: error, life: 3000 });
+
+      })
+      .finally(() => {
+        loading.value = false
         emits('event_refreshList')
         emits('event_HidesbArgomentiTicket')
       })

@@ -10,25 +10,30 @@
         <div>
           <!-- {{ fileExtention('https://posadas-core.datarete.cloud'+message.files[0].file_url)[0] }} -->
           <img style="width: 100%"
-            v-if="fileExtention('https://posadas-core.datarete.cloud'+message.files[0].file_url)[0] == 'png' || fileExtention('https://posadas-core.datarete.cloud'+message.files[0].file_url)[0] == 'jpg' || fileExtention('https://posadas-core.datarete.cloud'+message.files[0].file_url)[0] == 'jpeg' || fileExtention('https://posadas-core.datarete.cloud'+message.files[0].file_url)[0] == 'svg'"
-            :src="'https://posadas-core.datarete.cloud/'+message.files[0].file_url">
+            v-if="fileExtention('https://posadas-core.datarete.cloud' + message.files[0].file_url)[0] == 'png' || fileExtention('https://posadas-core.datarete.cloud' + message.files[0].file_url)[0] == 'jpg' || fileExtention('https://posadas-core.datarete.cloud' + message.files[0].file_url)[0] == 'jpeg' || fileExtention('https://posadas-core.datarete.cloud' + message.files[0].file_url)[0] == 'svg'"
+            :src="'https://posadas-core.datarete.cloud/' + message.files[0].file_url">
 
-          <iframe v-else-if="fileExtention('https://posadas-core.datarete.cloud'+message.files[0].file_url)[0] == 'pdf'"
-            :src="'https://posadas-core.datarete.cloud/'+message.files[0].file_url" frameborder="0"></iframe>
+          <iframe
+            v-else-if="fileExtention('https://posadas-core.datarete.cloud' + message.files[0].file_url)[0] == 'pdf'"
+            :src="'https://posadas-core.datarete.cloud/' + message.files[0].file_url" frameborder="0"></iframe>
 
 
         </div>
-        <span><a target="_blank" :href="'https://posadas-core.datarete.cloud/'+message.files[0].file_url"
+        <span><a target="_blank" :href="'https://posadas-core.datarete.cloud/' + message.files[0].file_url"
             style="margin: .5rem 0">
             {{ fileName(message.files[0].file_url) }}<br>
           </a></span>
 
-
-
-
-
       </span>
-      <span style="font-size: .8rem; color:azure">{{ formatDateTime(message.data) }}</span>
+      <div class="flex align-items-center justify-content-start gap-3 mt-2">
+        <Avatar v-if="message.user_avatar" :image="message.user_avatar"></Avatar>
+        <Avatar v-else icon="pi pi-user"></Avatar>
+        <div class="flex flex-column align-items-start">
+          <span class="text-xs text-white">{{ message.user_nome }}</span>
+          <span class="text-xs text-white">{{ formatDateTime(message.data) }}</span>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>

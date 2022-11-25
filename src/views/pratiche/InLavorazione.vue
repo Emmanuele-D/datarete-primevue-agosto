@@ -4,8 +4,8 @@
         pageTitle
     }}</h1>
     <TableBuilder @event_ShowSidebar_nuovoAppuntamento="$router.push('/eventi')" @event_ShowSidebar_creaPratica="null"
-      @event_ShowSidebar_elimina="null" :data="tableItems" :headersConfig="columns" :showAzioni="false"
-      :config="config">
+      @event_ShowSidebar_eye="goto" @event_ShowSidebar_elimina="null" :data="tableItems" :headersConfig="columns"
+      :showAzioni="true" :config="config">
     </TableBuilder>
 
 
@@ -17,10 +17,15 @@
 
 <script setup>
 import { ref } from 'vue'
-
+import { useRouter } from 'vue-router'
 // IMPORT COMPONENTS
 import TableBuilder from '../../components/TableBuilder.vue'
 
+const router = useRouter()
+
+function goto() {
+  router.push('dettaglio-pratica/2')
+}
 
 // id, 
 // nome cliente, 

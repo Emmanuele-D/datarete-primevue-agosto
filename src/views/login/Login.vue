@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import AxiosService from "@/axiosServices/AxiosService";
 import { AUTH_REQUEST } from "../../store/actions/auth";
 import store from "../../store";
 import { mapGetters } from "vuex";
@@ -57,6 +58,10 @@ export default {
             console.log("action required SELECT LEVEL");
             this.$router.push("setloginlevel");
           } else {
+            const service = new AxiosService('SetLoginLevel/' + res.data.livelli[0].Id)
+            service.create()
+              .then(res => console.log(res))
+              .catch(err => console.log(err))
             this.$router.push('/')
           }
         })

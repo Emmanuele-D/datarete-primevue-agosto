@@ -300,35 +300,37 @@ const toast = useToast()
 function setupSidebar() {
   if (props.sidebarData) {
 
-    const serviceGET = new AxiosService('Anagrafiche/Retail/' + props.sidebarData.id)
+    const serviceGET = new AxiosService('Anagrafiche/Retail/' + props.sidebarData.ID)
     serviceGET.read().then(res => anagraficaClienti.value = res).catch(err => console.log(err))
 
     // Object.assign(anagraficaClienti.value, props.sidebarData);
   }
 }
 
-//CLOSE SIDEBAR
+
+
+//CLOSE 
 function closeSidebar() {
   anagraficaClienti.value = {
-    NOME: '',
-    COGNOME: '',
-    CODICE_FISCALE: '',
-    ID_SESSO: "",
-    NASCITA_DATA: '',
-    CITTADINANZA: '',
-    NASCITA_NAZIONE_ID: '',
-    NASCITA_REGIONE_ID: '',
-    NASCITA_PROVINCIA_ID: '',
-    NASCITA_CITTA_ID: '',
-    ID_STATO_CIVILE: '',
-    ID_TIPO_OCCUPAZIONE: '',
-    PROFESSIONE: '',
-    DATA_ASSUNZIONE: '',
-    DATA_SCADENZA_CONTRATTO: '',
-    CONTRATTO_INDETERMINATO: '',
-    DENOMINAZIONE_AZIENDA: '',
-    POLITICAMENTE_ESPOSTO: false,
-    GUIDATORE_ABILE: false,
+    nome: '',
+    cognome: '',
+    codiceFiscale: '',
+    idSesso: "",
+    dataNascita: '',
+    cittadinanza: '',
+    idNazioneNascita: '',
+    idRegioneNascita: '',
+    idProvinciaNascita: '',
+    idCittaNascita: '',
+    idStatoCivile: '',
+    idTipoOccupazione: '',
+    professione: '',
+    dataAssunzione: '',
+    dataScadenzaContratto: '',
+    contrattoIndeterminato: '',
+    nomeAzienda: '',
+    personaPoliticamenteEsposta: false,
+    guidatoreAbituale: false,
     indirizzi: [],
     contatti: [],
     documenti: [],
@@ -401,8 +403,7 @@ function saveForm() {
             life: 3000
           }
         )
-        emit('event_refreshList')
-        emit('event_HideNuovaAnagrafica')
+
       })
       .catch(error => {
         toast.add(
@@ -413,10 +414,11 @@ function saveForm() {
             life: 3000
           }
         )
-        emit('event_refreshList')
-        emit('event_HideNuovaAnagrafica')
+
       })
       .finally(() => {
+        emit('event_refreshList')
+        emit('event_HideNuovaAnagrafica')
         loading.value = false
       })
   } else {

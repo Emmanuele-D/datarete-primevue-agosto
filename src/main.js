@@ -6,7 +6,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json;charset=utf-8";
 axios.defaults.headers.put["Content-Type"] = "application/json;charset=utf-8";
 axios.defaults.baseURL = "https://posadas-core.datarete.cloud/api/";
 //To load existing token with a refresh
-const token = localStorage.getItem("user-token");
+const token = localStorage.getItem("DR_P-user-token");
 if (token) {
   axios.defaults.headers.common["Authorization"] = token;
 }
@@ -15,7 +15,7 @@ import router from "./router";
 
 import store from "./store";
 
-import firebaseMessaging from '../firebaseConfig'
+import firebaseMessaging from "../firebaseConfig";
 
 import "primevue/resources/themes/saga-blue/theme.css";
 import "primevue/resources/primevue.min.css";
@@ -27,25 +27,24 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 import "./assets/scss/style.scss";
 
-import NotificationService from './utils/Notification.vue';
+import NotificationService from "./utils/Notification.vue";
 
 import PrimeVueConfigurator from "./utils/PrimeVueConfigurator";
 import ConfirmationService from "primevue/confirmationservice";
 
 const app = createApp({
   extends: App,
-  mixins: [ NotificationService],
+  mixins: [NotificationService],
   // components: {
   //   Hello,
   //   Thing,
   // }
 });
 
-
-
 app.config.globalProperties.$messaging = firebaseMessaging;
 
 PrimeVueConfigurator.init(app);
+
 app.use(router);
 app.use(store);
 app.use(ConfirmationService);

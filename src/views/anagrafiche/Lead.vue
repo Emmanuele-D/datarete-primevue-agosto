@@ -1,9 +1,11 @@
 <template>
+  <ConfirmDialog></ConfirmDialog>
+  <Toast></Toast>
   <div class="wrapper">
     <h1>Anagrafiche Lead</h1>
-    <TableBuilder @event_ShowSidebar_eye="$router.push('/crm')" @event_ShowSidebar_edit="showEditAnagrafica"
-      @event_ShowSidebar_modifica=" null" @event_ShowSidebar_nuovoAppuntamento="$router.push('/eventi')"
-      @event_ShowSidebar_creaPratica="null" @event_ShowSidebar_elimina="null"
+    <TableBuilder @event_ShowSidebar_eye="goToCrm" @event_ShowSidebar_edit="showEditAnagrafica"
+      @event_ShowSidebar_modifica="null" @event_ShowSidebar_nuovoAppuntamento="$router.push('/eventi')"
+      @event_ShowSidebar_creaPratica="null" @event_ShowSidebar_elimina="confirmDelete"
       @event_Menubar_Inserisci="showSidebarEventi" :data="tableItems" :headersConfig="columns" :config="config"
       :showAzioni="true">
     </TableBuilder>
@@ -13,7 +15,7 @@
     </Sidebar>
 
     <Sidebar v-model:visible="nuovaAnagraficaVisible" :baseZIndex="10000" position="right" class="p-sidebar-lg">
-      <NuovaAnagrafica :sidebarData="nuovaAnagraficaData">
+      <NuovaAnagrafica @event_refreshList="hideEditAnagrafica" :sidebarData="nuovaAnagraficaData">
       </NuovaAnagrafica>
     </Sidebar>
 
@@ -26,9 +28,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useStore } from 'vuex'
+import { CRM_POST } from "../../store/actions/crm";
 import axios from 'axios'
 import AxiosService from '../../axiosServices/AxiosService'
-
+import router from '@/router'
+import { useToast } from 'primevue/usetoast'
+import { useConfirm } from "primevue/useconfirm";
 // IMPORT COMPONENTS
 import TableBuilder from '../../components/TableBuilder.vue'
 
@@ -37,6 +42,9 @@ import SidebarClienti from '../../components/sidebars/SidebarClienti.vue'
 import NuovaAnagrafica from '../../components/sidebars/NuovaAnagrafica.vue'
 import SidebarEventi from '../../components/sidebars/SidebarEventi.vue'
 
+
+const confirm = useConfirm()
+const toast = useToast()
 // SET STORE UTILITIES
 const store = useStore()
 function setContentLoading_true() {
@@ -45,7 +53,6 @@ function setContentLoading_true() {
 function setContentLoading_false() {
   store.dispatch('CONTENTLOADING_FALSE')
 }
-
 // SET EVENTS
 // eslint-disable-next-line no-unused-vars, no-undef
 const emit = defineEmits(['event_Menubar_Inserisci'])
@@ -61,26 +68,8 @@ function showSidebarEventi() {
 // SIDEBAR NUOVA ANAGRAFICA 
 const nuovaAnagraficaVisible = ref(false)
 const nuovaAnagraficaData = ref()
-// function showNuovaAnagrafica() {
-//   nuovaAnagraficaVisible.value = true
-// }
-
-
-// SIDEBAR CLIENTI 
-const sidebarClientiVisible = ref(false)
-const sidebarClientiData = ref()
-function showSidebarClienti(event) {
-  sidebarClientiData.value = event
-  sidebarClientiData.value.callsToCalendar == 0
-  sidebarClientiVisible.value = true
-}
-
-
 function showEditAnagrafica(event) {
-  console.log("🚀 ~ file: Lead.vue ~ line 82 ~ showEditAnagrafica ~ event", event)
-
   const eventMapped = {}
-
   eventMapped.id = event.ID
   eventMapped.nome = event.NOME
   eventMapped.cognome = event.COGNOME
@@ -106,6 +95,23 @@ function showEditAnagrafica(event) {
   nuovaAnagraficaVisible.value = true
   nuovaAnagraficaData.value = eventMapped
 }
+function hideEditAnagrafica() {
+  nuovaAnagraficaData.value = {}
+  nuovaAnagraficaVisible.value = false
+  getViews()
+}
+
+// SIDEBAR CLIENTI 
+const sidebarClientiVisible = ref(false)
+const sidebarClientiData = ref()
+function showSidebarClienti(event) {
+  sidebarClientiData.value = event
+  sidebarClientiData.value.callsToCalendar == 0
+  sidebarClientiVisible.value = true
+}
+
+
+
 
 
 // TABLE BUILDER
@@ -225,7 +231,45 @@ function getTableItems() {
   setContentLoading_false()
 }
 
+function confirmDelete(element) {
+  confirm.require({
+    message: 'Sei sicuro di voler eliminare "' + element.NOME + " " + element.COGNOME + '"',
+    header: 'Conferma Eliminazione',
+    icon: 'pi pi-fw pi-trash',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      deleteRetail(element)
+    },
+    reject: () => {
+      return
+    }
+  })
+}
+
+function deleteRetail(element) {
+  const serviceDELETE = new AxiosService('Anagrafiche/DeleteRetail')
+  serviceDELETE.delete(element.id || element.ID).
+    then(res => {
+      if (res) {
+        toast.add({ severity: 'success', summary: 'Opzione Eliminata', detail: element.nome, life: 3000 });
+        tableItems.value ? tableItems.value.length = 0 : null
+        getTableItems()
+      }
+    })
+    .catch(error => {
+      toast.add({ severity: 'error', summary: "Errore nell'eliminazione dell'opzione'", detail: error, life: 3000 });
+      tableItems.value ? tableItems.value.length = 0 : null
+      getTableItems()
+    })
+}
+
 // // build table
+function goToCrm(ev) {
+  console.log("🚀 ~ file: Clienti.vue ~ line 205 ~ goToCrm ~ sidebarClientiData.value", ev)
+  store.dispatch(CRM_POST, ev)
+
+  router.push('/crm/' + ev.ID)
+}
 
 getViews()
 
