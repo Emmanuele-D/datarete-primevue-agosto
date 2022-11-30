@@ -4,7 +4,7 @@
 
     <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
       <div class="grid mb-2">
-        <div class="sm:col-12 md:col-6 lg:col-3">
+        <div class="sm:col-12 md:col-4 lg:col-3">
           <div class="surface-card shadow-2 p-3 border-round">
             <div class="flex justify-content-between mb-3">
               <div>
@@ -20,7 +20,7 @@
             <span class="text-500">since last visit</span>
           </div>
         </div>
-        <div class="sm:col-12 md:col-6 lg:col-3">
+        <div class="sm:col-12 md:col-4 lg:col-3">
           <div class="surface-card shadow-2 p-3 border-round">
             <div class="flex justify-content-between mb-3">
               <div>
@@ -36,7 +36,7 @@
             <span class="text-500">since last week</span>
           </div>
         </div>
-        <div class="sm:col-12 md:col-6 lg:col-3">
+        <div class="sm:col-12 md:col-4 lg:col-3">
           <div class="surface-card shadow-2 p-3 border-round">
             <div class="flex justify-content-between mb-3">
               <div>
@@ -52,7 +52,7 @@
             <span class="text-500">newly registered</span>
           </div>
         </div>
-        <div class="sm:col-12 md:col-6 lg:col-3">
+        <div class="sm:col-12 md:col-4 lg:col-3">
           <div class="surface-card shadow-2 p-3 border-round">
             <div class="flex justify-content-between mb-3">
               <div>
@@ -68,7 +68,26 @@
             <span class="text-500">responded</span>
           </div>
         </div>
+
+        <div class="col">
+          <div class="surface-card shadow-2 p-3 border-round">
+            <span class="block text-500 font-medium mb-3">Leads caldi</span>
+            <DataTable :value="hotLeads">
+              <Column field="nome" header="Nome"></Column>
+              <Column field="cognome" header="Cognome"></Column>
+              <Column field="email" header="Email"></Column>
+              <Column field="telefono" header="Tel"></Column>
+            </DataTable>
+          </div>
+        </div>
+        <div class="sm:col-12 md:col-6 lg:col-4">
+          <div class="surface-card shadow-2 p-3 border-round grid-center">
+            <span class="block text-500 font-medium mb-3">Tachimetro</span>
+            <Knob v-model="knob" valueColor="#1e3181" rangeColor="#d5d51e" :size="200" />
+          </div>
+        </div>
       </div>
+
       <div class="grid mb-2">
         <div class="sm:col-12 md:col-5">
           <div class="card">
@@ -83,6 +102,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </template>
@@ -95,6 +115,35 @@ const store = useStore()
 
 console.log('getter livelli login', store.getters["getLivelliLogin"])
 console.log('getter logget user', store.getters["loggedUser"])
+
+const knob = ref(30)
+
+const hotLeads = ref([
+  {
+    nome: 'Mariano',
+    cognome: 'Poggi',
+    email: 'marianopoggi@gmail.com',
+    telefono: '3431231234'
+  },
+  {
+    nome: 'Andrea',
+    cognome: 'Fabbri',
+    email: 'andreafabbri@gmail.com',
+    telefono: '34312121212'
+  },
+  {
+    nome: 'Luciana',
+    cognome: 'Dossi',
+    email: 'lucianadossi@gmail.com',
+    telefono: '33323982938'
+  },
+  {
+    nome: 'Giulia',
+    cognome: 'Casadei',
+    email: 'giuliacasadei@gmail.com',
+    telefono: '3891230984'
+  }
+])
 
 const stackedOptions = ref(
   {

@@ -48,8 +48,8 @@
   <Sidebar v-model:visible="sidebarVisible" :baseZIndex="10000" position="right" class="p-sidebar-md"
     @hide="$emit('event_HideUsersSidebar')">
 
-    <UsersSidebar @event_HideUsersSidebar="event_HideUsersSidebar" :sidebarData="sidebarData">
-    </UsersSidebar>
+    <sbAccademy @event_HideUsersSidebar="event_HideUsersSidebar" :sidebarData="sidebarData">
+    </sbAccademy>
   </Sidebar>
 </template>
 
@@ -59,7 +59,7 @@ import TableSkeleton from '@/components/skeletons/TableSkeleton.vue';
 import AxiosService from '@/axiosServices/AxiosService';
 import { useToast } from 'primevue/usetoast';
 import { FilterMatchMode } from 'primevue/api';
-import UsersSidebar from '@/components/sidebars/UsersSidebar.vue';
+import sbAccademy from '@/components/sidebars/sbAccademy.vue';
 
 const toast = useToast()
 const loading = ref(false)

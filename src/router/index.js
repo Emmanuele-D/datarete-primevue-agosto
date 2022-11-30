@@ -225,6 +225,10 @@ const router = createRouter({
           name: "gestione",
           children: [
             {
+              path: "campagne-marketing",
+              component: () => import("@/views/gestione/CampagneMarketing.vue"),
+            },
+            {
               path: "modelli-mail",
               component: () => import("@/views/gestione/ModelliMail.vue"),
             },

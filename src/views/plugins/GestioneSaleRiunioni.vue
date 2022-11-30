@@ -21,8 +21,8 @@
         <DataTable v-else :value="data" :stripedRows="true" :paginator="true" :rows="10" :resizableColumns="true"
           :scrollable="true" table-layout="auto" ref="dt">
           <Column field="img" header="IMG">
-            <template #body="{data}">
-              <img style="width:200px" :src="require('../../assets/images/' + data.img)" alt="">
+            <template #body="{ data }">
+              <Image :src="data.immagine" width="175" />
             </template>
           </Column>
           <Column field="nome" header="NOME">
@@ -31,14 +31,14 @@
             </template>
           </Column>
           <Column field="capienza" header="CAPIENZA">
-            <template #body="{data}">
-              <i class="pi pi-fw pi-user mr-2"></i>{{data.capienza}}
+            <template #body="{ data }">
+              <i class="pi pi-fw pi-user mr-2"></i>{{ data.capienza }}
             </template>
           </Column>
-          <Column field="dettagli" header="DETTAGLI">
-            <template #body="{data}">
+          <Column field="tag" header="DETTAGLI">
+            <template #body="{ data }">
               <div class="flex flex-wrap">
-                <Chip class="mb-2 mr-2" v-for="(item, i) in data.dettagli" :key="i" :label="item"></Chip>
+                <Chip class="mb-2 mr-2" v-for="(item, i) in data.tag" :key="i" :label="item"></Chip>
               </div>
             </template>
           </Column>
@@ -56,86 +56,59 @@
   </div>
   <Sidebar v-model:visible="sidebarVisible" :baseZIndex="10000" position="right" class="p-sidebar-md"
     @hide="$emit('event_HideOptionsManager')">
-    <OptionsManager :sidebarData="sidebarData">
-    </OptionsManager>
+    <SbGestioneSale :sidebarData="sidebarData" @event_refreshList="hideSidebar">
+    </SbGestioneSale>
   </Sidebar>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-// import { useConfirm } from "primevue/useconfirm";
-// import { useToast } from 'primevue/usetoast'
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from 'primevue/usetoast'
 
-// import AxiosService from '@/axiosServices/AxiosService';
+import AxiosService from '@/axiosServices/AxiosService';
 import TableSkeleton from '@/components/skeletons/TableSkeleton.vue';
-import OptionsManager from '@/components/sidebars/OptionsManager.vue';
+import SbGestioneSale from '@/components/sidebars/sbGestioneSale.vue';
 
 const store = useStore()
-// function setContentLoading_true() {
-//   store.dispatch('CONTENTLOADING_TRUE')
-// }
-// function setContentLoading_false() {
-//   store.dispatch('CONTENTLOADING_FALSE')
-// }
+
 const contentLoading = computed(() => store.getters.contentLoading)
 
-// const confirm = useConfirm()
-// const toast = useToast()
+const confirm = useConfirm()
+const toast = useToast()
+const loading = ref(false)
+const data = ref()
 
-const data = ref([
-  {
-    nome: 'Sala uno',
-    img: 'office1.jpg',
-    capienza: 4,
-    dettagli: ['Proiettore', 'Computer']
-  },
-  {
-    nome: 'Sala due',
-    img: 'office2.jpg',
-    capienza: 10,
-    dettagli: ['Proiettore', 'Computer', 'Bevande calde']
-  },
-  {
-    nome: 'Sala tre',
-    img: 'office3.jpg',
-    capienza: 2,
-    dettagli: []
-  },
-  {
-    nome: 'Sala quattro',
-    img: 'office4.jpg',
-    capienza: 6,
-    dettagli: ['Proiettore', 'Computer', 'Bevande calde']
-  },
-])
+// GET DATA FOR THE VIEW
+function getViewData() {
+  const serviceGET = new AxiosService(view.endpointGET)
+  loading.value = true
+  serviceGET.read()
+    .then(res => {
+      if (res) {
+        data.value ? data.value.length = 0 : null
+        data.value = res
+        toast.add({ severity: 'success', summary: 'Lista Opzioni Caricata', life: 3000 });
 
-// // GET DATA FOR THE VIEW
-// function getViewData() {
-//   const serviceGET = new AxiosService(view.endpointGET)
-//   setContentLoading_true()
-//   serviceGET.read()
-//     .then(res => {
-//       if (res) {
-//         data.value ? data.value.length = 0 : null
-//         data.value = res
-//         toast.add({ severity: 'success', summary: 'Lista Opzioni Caricata', life: 3000 });
-//         setContentLoading_false()
-//       }
-//     })
-//     .catch(err => {
-//       toast.add({ severity: 'error', summary: 'Errore nel caricamento della lista delle Opzioni', detail: err, life: 3000 });
-//       setContentLoading_false()
-//     })
-// }
+      }
+    })
+    .catch(err => {
+      toast.add({ severity: 'error', summary: 'Errore nel caricamento della lista delle Opzioni', detail: err, life: 3000 });
+
+    })
+    .finally(() => {
+      loading.value = false
+    })
+}
 
 // SETTING VIEW
 const view = {
   title: 'Gestione Sale Riunione',
-  endpointGET: null,
-  endpointPOST: null,
-  endpointPUT: null, // /ID
-  endpointDELETE: null // /ID
+  endpointGET: 'Gestione/SaleRiunioni/GetSale',
+  endpointPOST: 'Gestione/SaleRiunioni/AddSala',
+  endpointPUT: 'Gestione/SaleRiunioni/UpdateSala', // /ID
+  endpointDELETE: 'Gestione/SaleRiunioni/DeleteSala' // /ID
 }
 
 // SETTINGS AND DYNAMICS SIDEBAR
@@ -154,39 +127,40 @@ function hideSidebar() {
     view: view,
     event: {}
   }
+  getViewData()
 }
 
-// // DELETE OPTION
-// function confirmDelete(element) {
-//   confirm.require({
-//     message: 'Sei sicuro di voler eliminare "' + element.nome + '"',
-//     header: 'Conferma Eliminazione',
-//     icon: 'pi pi-fw pi-trash',
-//     acceptClass: 'p-button-danger',
-//     accept: () => {
-//       deleteStato(element)
-//     },
-//     reject: () => {
-//       return
-//     }
-//   })
-// }
-// const serviceDELETE = new AxiosService(view.endpointDELETE)
-// function deleteStato(element) {
-//   serviceDELETE.delete(element.id).
-//     then(res => {
-//       if (res) {
-//         toast.add({ severity: 'success', summary: 'Opzione Eliminata', detail: element.nome, life: 3000 });
-//         data.value ? data.value.length = 0 : null
-//         getViewData()
-//       }
-//     })
-//     .catch(error => {
-//       toast.add({ severity: 'error', summary: "Errore nell'eliminazione dell'opzione'", detail: error, life: 3000 });
-//       data.value ? data.value.length = 0 : null
-//       getViewData()
-//     })
-// }
+// DELETE OPTION
+function confirmDelete(element) {
+  confirm.require({
+    message: 'Sei sicuro di voler eliminare "' + element.nome + '"',
+    header: 'Conferma Eliminazione',
+    icon: 'pi pi-fw pi-trash',
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      deleteStato(element)
+    },
+    reject: () => {
+      return
+    }
+  })
+}
+const serviceDELETE = new AxiosService(view.endpointDELETE)
+function deleteStato(element) {
+  serviceDELETE.delete(element.id).
+    then(res => {
+      if (res) {
+        toast.add({ severity: 'success', summary: 'Opzione Eliminata', detail: element.nome, life: 3000 });
+        data.value ? data.value.length = 0 : null
+        getViewData()
+      }
+    })
+    .catch(error => {
+      toast.add({ severity: 'error', summary: "Errore nell'eliminazione dell'opzione'", detail: error, life: 3000 });
+      data.value ? data.value.length = 0 : null
+      getViewData()
+    })
+}
 
-// getViewData()
+getViewData()
 </script>

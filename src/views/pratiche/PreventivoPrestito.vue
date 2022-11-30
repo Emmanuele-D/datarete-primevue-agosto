@@ -82,6 +82,7 @@
         <div class="flex justify-content-end mt-4">
           <Button label=" paintFakeData" @click="paintFakeData"></Button>
           <Button @click="calcola" :loading="loading" label="Calcola"></Button>
+          <Button @click="calcolaTeams" :loading="loading" label="Calcola link da teams"></Button>
         </div>
       </div>
       <div class="col-12 col-lg-8">
@@ -331,11 +332,12 @@ function calcola() {
     }
   };
 
-  axios.request(options).then(function (response) {
-    console.log(response.data);
-  }).catch(function (error) {
-    console.error(error);
-  });
+  axios.request(options)
+    .then(function (response) {
+      console.log(response.data);
+    }).catch(function (error) {
+      console.error(error);
+    });
 
 
   // const data_nascita = formatData(tmpCliente.value.data_nascita)
@@ -346,6 +348,15 @@ function calcola() {
   //     console.log("🚀 ~ file: PreventivoPrestito.vue ~ line 163 ~ calcola ~ res", res)
   //     risultato.value = res
   //   })
+}
+
+function calcolaTeams() {
+  const service = new AxiosService()
+  service.readCustomEndpoint('https://prestitosi.mediafacile.it/fmi/xml/fmresultset.xml?Passkey=3A1D8712&Tipo_contratto=Prestito&Cliente=Emmanuele+Durante&Data_nascita=12-14-1990&Data_assunzione=02-09-2001&Sesso=M&Tipo_rapporto=Pubblico&Durata=48&Importo_richiesto=10000&Reddito_richiedenti=70000&ID_listino=0006&-new=&-lay=ws-preventivo&-db=mediafacile-ai-prestitosi&-script=calcola-preventivi-ws')
+    .then(res => {
+      console.log("🚀 ~ file: PreventivoPrestito.vue ~ line 163 ~ calcolaTeams ~ res", res)
+      risultato.value = res
+    })
 }
 
 var parseString = require('xml2js').parseString;
