@@ -1,8 +1,9 @@
 <template>
   <div class="sidebar no-scrollbar">
     <div class="sidebar-header d-flex justify-content-between align-items-center">
-      <div class="logo-image" :style="{ backgroundImage: 'url(' + company.logo + ')' }"></div>
-      <i class="double-arrow left" @click="onMenuToggle"></i>
+      <div class="logo-image"><img style="width: 172px;margin-top:15px"
+          src="https://prestitosifinance.it/wp-content/uploads/2022/09/PRESTITOSI.png"></div><i
+        class="double-arrow left"></i>
     </div>
 
     <div v-for="(group, i) of model" :key="i">
@@ -37,12 +38,13 @@ export default {
 
 <style lang="scss">
 .double-arrow {
-  border: solid #515151;
+  border: solid #fbff3d;
   border-width: 0 3px 3px 0;
   display: inline-block;
   padding: 5px;
   position: relative;
   cursor: pointer;
+  color: #fbff3d;
 
   &::after {
     content: "";
@@ -50,8 +52,9 @@ export default {
     padding: 5px;
     top: -6px;
     left: -6px;
-    border: solid #2c2c2c;
+    border: solid #fbff3d;
     border-width: 0 3px 3px 0;
+    color: #fbff3d;
   }
 
   &.left {

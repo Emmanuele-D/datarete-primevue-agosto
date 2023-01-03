@@ -143,6 +143,7 @@ function salva() {
         resetForm()
         emits('reloadFeed')
         loading.value = false
+
         activeTab.value = null
       })
   }

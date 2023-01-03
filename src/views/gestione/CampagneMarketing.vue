@@ -17,9 +17,17 @@
         </div>
         <DataTable v-else :value="data" :stripedRows="true" :paginator="true" :rows="10" :resizableColumns="true"
           :scrollable="true" table-layout="auto" ref="dt">
-          <Column field="nome" header="Nome">
+          <Column field="nome" header="Nome"></Column>
+          <Column field="fonte" header="Fonte"></Column>
+          <Column field="shortCode" header="Short Code"></Column>
+          <Column field="dataInizio" header="Data Inizio">
             <template #body="{ data }">
-              {{ data.nome }}
+              {{ new Date(data.dataInizio).toLocaleDateString('it') }}
+            </template>
+          </Column>
+          <Column field="dataFine" header="Data Fine">
+            <template #body="{ data }">
+              {{ new Date(data.dataFine).toLocaleDateString('it') }}
             </template>
           </Column>
 
@@ -37,8 +45,7 @@
   </div>
   <Sidebar v-model:visible="sidebarVisible" :baseZIndex="10000" position="right" class="p-sidebar-md"
     @hide="$emit('event_HideOptionsManager')">
-    <OptionsManager :sidebarData="sidebarData">
-    </OptionsManager>
+    <sbCampagnaMarketing @event_refreshList="hideSidebar" :sidebarData="sidebarData"></sbCampagnaMarketing>
   </Sidebar>
 </template>
 
@@ -50,7 +57,7 @@ import { useToast } from 'primevue/usetoast'
 
 import AxiosService from '@/axiosServices/AxiosService';
 import TableSkeleton from '@/components/skeletons/TableSkeleton.vue';
-import OptionsManager from '@/components/sidebars/OptionsManager.vue';
+import sbCampagnaMarketing from '@/components/sidebars/sbCampagnaMarketing.vue';
 
 const store = useStore()
 function setContentLoading_true() {
@@ -88,10 +95,10 @@ function getViewData() {
 // SETTING VIEW
 const view = {
   title: 'Campagne Marketing',
-  // endpointGET: 'Options/Sesso',
-  // endpointPOST: 'Options/Sesso',
-  // endpointPUT: 'Options/Sesso', // /ID
-  // endpointDELETE: 'Options/Sesso' // /ID
+  endpointGET: 'Marketing/Campaigns',
+  endpointPOST: 'Marketing/Campaigns',
+  endpointPUT: 'Marketing/Campaigns', // /ID
+  endpointDELETE: 'Marketing/Campaigns' // /ID
 }
 
 // SETTINGS AND DYNAMICS SIDEBAR
@@ -110,6 +117,7 @@ function hideSidebar() {
     view: view,
     event: {}
   }
+  getViewData()
 }
 
 // DELETE OPTION

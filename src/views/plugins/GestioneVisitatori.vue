@@ -25,8 +25,8 @@
               </div>
               <div class="flex flex-column col-12">
                 <label for="target">Destinatario</label>
-                <Dropdown v-model="tempVisitatore.id_user_visita" :options="destinatariOptions" optionLabel="text"
-                  optionValue="value"></Dropdown>
+                <Dropdown :filter="true" v-model="tempVisitatore.id_user_visita" :options="destinatariOptions"
+                  optionLabel="text" optionValue="value"></Dropdown>
               </div>
               <div class="flex flex-column col-12">
                 <label for="goal">Motivo della visita</label>

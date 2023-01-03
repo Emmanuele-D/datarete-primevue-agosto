@@ -2,62 +2,59 @@
   <div class="wrapper">
     <h1 class="mb-4">Preventivo Prestito</h1>
 
+    <Card v-if="istitutiOptions.length > 0" class="mb-4">
+      <template #content>
+        <div class="w-full flex justify-content-between">
+          <Dropdown :filter="true" :options="istitutiOptions" v-model="istitutiSelected"></Dropdown>
+        </div>
+        <div class="flex justify-content-end w-full">
+          <Button @click="filterByIstituto" label="Filtra"></Button>
+        </div>
+      </template>
+    </Card>
+
     <div class="grid">
       <div class="col-12 col-lg-4">
         <Card>
           <template #content>
             <h2 class="mb-4" role="button">
-              <span @click="setClienteDataRete" :class="{ 'grey-text': cliente == 'nuovo' }">Cliente DataRete </span>/
-              <span @click="setNuovoCliente" :class="{ 'grey-text': cliente == 'datarete' }">Nuovo Cliente</span>
+
+              <span v-if="route.params.idAnagrafica != 0">{{ objectToPost.nomeCliente }}</span>
+              <span v-else-if="route.params.idPreventivo != 0">{{ objectToPost.nomeCliente }}</span>
+              <span v-else>Nuovo Cliente</span>
+
             </h2>
 
             <div v-if="loading">
               <i class="pi pi-spin pi-spinner"></i>
             </div>
             <div v-else>
-              <div v-if="cliente == 'datarete'" class="flex flex-column w-full">
-                <label>Seleziona il cliente</label>
-                <Dropdown :options="clientiOptions" optionLabel="text" optionValue="value" v-model="tmpCliente.id"
-                  @change="getRetail(tmpCliente.id)">
-                </Dropdown>
-              </div>
-              <div v-else-if="cliente == 'nuovo'">
-                <div class="flex flex-column w-full">
-                  <label>Nome</label>
-                  <InputText type="text" v-model="tmpCliente.nome"></InputText>
+
+              <div>
+                <div class="flex flex-column w-full mb-4 " :class="{ 'not-valid-item': !valid_nomeCliente }">
+                  <label>Nome e cognome </label>
+                  <InputText type="text" v-model="objectToPost.nomeCliente"></InputText>
                 </div>
-                <div class="flex flex-column w-full">
-                  <label>Cognome</label>
-                  <InputText type="text" v-model="tmpCliente.cognome"></InputText>
-                </div>
-                <div class="flex flex-column w-full">
-                  <label>Email</label>
-                  <InputText type="text" v-model="tmpCliente.email"></InputText>
-                </div>
-                <div class="flex flex-column w-full mb-4">
-                  <label>Telefono</label>
-                  <InputText type="text" v-model="tmpCliente.cellulare"></InputText>
-                </div>
-                <div class="flex flex-column w-full mb-4">
+                <div class="flex flex-column w-full mb-4 " :class="{ 'not-valid-item': !valid_dataNascita }">
                   <label>Data di nascita</label>
-                  <Calendar v-model="tmpCliente.data_nascita"></Calendar>
+                  <Calendar v-model="objectToPost.dataNascita"></Calendar>
                 </div>
-                <div class="flex flex-column w-full mb-4">
+                <div class="flex flex-column w-full mb-4 " :class="{ 'not-valid-item': !valid_dataAssunzione }">
                   <label>Data di assunzione</label>
-                  <Calendar v-model="tmpCliente.data_assunzione"></Calendar>
+                  <Calendar v-model="objectToPost.dataAssunzione"></Calendar>
                 </div>
-                <div class="flex flex-column w-full mb-4">
+                <div class="flex flex-column w-full mb-4 " :class="{ 'not-valid-item': !valid_sesso }">
                   <label>Genere</label>
-                  <Dropdown :options="genereOptions" optionLabel="text" optionValue="value" v-model="tmpCliente.genere">
+                  <Dropdown :filter="true" :options="genereOptions" optionLabel="text" optionValue="value"
+                    v-model="objectToPost.sesso">
                   </Dropdown>
                 </div>
-                <div class="flex justify-content-end">
-                  <Button :loading="loading" label="Salva"></Button>
+                <div class="flex flex-column w-full mb-4 " :class="{ 'not-valid-item': !valid_tipoRapporto }">
+                  <label>Tipo rapporto lavoro</label>
+                  <Dropdown :filter="true" v-model="objectToPost.tipoRapporto" :options="tipoRapportoOptions"
+                    optionLabel="text" optionValue="text"></Dropdown>
                 </div>
-                <div class="w-full flex  align-items center mt-2">
-                  <Checkbox v-model="nuovaAnagrafica" :binary="true"></Checkbox>
-                  <label class="ml-2">Salva come nuova anagrafica</label>
-                </div>
+
               </div>
             </div>
           </template>
@@ -65,24 +62,32 @@
         <Card class="mt-4">
           <template #content>
             <h2>Prestito personale</h2>
-            <div class="flex flex-column w-full">
-              <label>Reddito del richiedente</label>
-              <InputText type="text" v-model="tmpPrestito.reddito"></InputText>
+            <div class="flex flex-column w-full mb-4 " :class="{ 'not-valid-item': !valid_redditoRichiedenti }">
+              <label>Reddito mensile netto del richiedente </label>
+              <InputNumber currency="EUR" mode="currency" locale="it-IT" :minFractionDigits="2"
+                v-model="objectToPost.redditoRichiedenti"></InputNumber>
             </div>
-            <div class="flex flex-column w-full">
+            <div class="flex flex-column w-full mb-4 " :class="{ 'not-valid-item': !valid_importoRichiesto }">
               <label>Importo richiesto</label>
-              <InputText type="text" v-model="tmpPrestito.importo"></InputText>
+              <InputNumber currency="EUR" mode="currency" locale="it-IT" :minFractionDigits="2"
+                v-model="objectToPost.importoRichiesto"></InputNumber>
             </div>
-            <div class="flex flex-column w-full mb-4">
-              <label>Durata</label>
-              <Dropdown type="text" v-model="tmpPrestito.durata" :options="durataOptions"></Dropdown>
+            <div class="flex flex-column w-full mb-4 " :class="{ 'not-valid-item': !valid_provvigione }">
+              <label>Provvigione</label>
+              <InputNumber currency="EUR" mode="currency" locale="it-IT" :minFractionDigits="2"
+                v-model="objectToPost.provvigione"></InputNumber>
+            </div>
+            <div class="flex flex-column w-full mb-4 " :class="{ 'not-valid-item': !valid_durata }">
+              <label>Durata mesi</label>
+              <Dropdown :filter="true" type="text" v-model="objectToPost.durata" :options="durataOptions"></Dropdown>
             </div>
           </template>
         </Card>
-        <div class="flex justify-content-end mt-4">
-          <Button label=" paintFakeData" @click="paintFakeData"></Button>
-          <Button @click="calcola" :loading="loading" label="Calcola"></Button>
-          <Button @click="calcolaTeams" :loading="loading" label="Calcola link da teams"></Button>
+        <div class="flex justify-content-between mt-4">
+          <Button :disabled="!isValidFilter" :loading="loading" label="Salva preventivo" @click="salvaPreventivo"
+            class="mr-4"></Button>
+          <Button :disabled="!isValidFilter" :loading="loading" label="Ricerca opzioni"
+            @click="ricercaRisultati"></Button>
         </div>
       </div>
       <div class="col-12 col-lg-8">
@@ -115,19 +120,18 @@
                 </div>
               </div>
               <Divider></Divider>
-              <div class="grid">
-                <div class="col-9">
+              <div class="flex justify-content-between">
+                <div class="">
                   <span>Polizza: </span>
                   <span>{{ item.Descrizione_polizza }}</span>
-
                 </div>
-                <div class="col-3 flex justify-content-end">
-                  <Button @click="showModal(item)" label="Dettagli" class="p-button-outlined"></Button>
+                <div class=" flex flex-grow justify-content-between">
+                  <Button @click="showModal(item)" label="Dettagli" class="p-button-outlined mr-2"></Button>
+                  <Button @click="creaPratica(item)" label="Crea Pratica" class="p-button-outlined mr-2"></Button>
                 </div>
               </div>
             </template>
           </Card>
-
         </div>
         <Divider class="mt-4 mb-4"></Divider>
         <div v-for="(item, index) of reducedRisultato" :key="index">
@@ -180,17 +184,23 @@
     <Divider></Divider>
     <div>
       <div class="flex justify-content-between">
-        <span>Importo Rata</span>
-        <span>{{ formateDivise(tmpItem.Importo_rata) }}</span>
+        <span>Importo Richiesto</span>
+        <span>{{ objectToPost.importoRichiesto }},00 €</span>
+      </div>
+      <div class="flex justify-content-between">
+        <span>Importo finanziato</span>
+        <span>{{ formateDivise(tmpItem.Importo_erogato) }}</span>
       </div>
       <div class="flex justify-content-between">
         <span>Durata</span>
         <span>{{ tmpItem.Durata }}</span>
       </div>
-      <div class="flex justify-content-between">
-        <span>Importo Restituito</span>
-        <span>{{ formateDivise(tmpItem.Importo_erogato) }}</span>
-      </div>
+
+    </div>
+    <Divider></Divider>
+    <div class="flex justify-content-between">
+      <span>Importo rata</span>
+      <span>{{ formateDivise(tmpItem.Importo_rata) }}</span>
     </div>
     <Divider></Divider>
     <div>
@@ -233,59 +243,126 @@
         <span>TAEG</span>
         <span>{{ tmpItem.TAEG }} %</span>
       </div>
-      <div class="flex justify-content-between">
-        <span>TEG</span>
-        <span>{{ tmpItem.TEG }} %</span>
-      </div>
     </div>
   </Dialog>
 </template>
 
 <script setup >
 import AxiosService from '@/axiosServices/AxiosService';
-
+import { useRoute } from 'vue-router';
 import axios from "axios";
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
 
 const loading = ref(false)
+const route = useRoute()
+const store = useStore()
 
-
-// CLIENTE
-const cliente = ref('datarete')
-const tmpCliente = ref({})
-const nuovaAnagrafica = ref(true)
-
-function setClienteDataRete() {
-  resetTmpCliente()
-  cliente.value = 'datarete'
+function checkRouteParams() {
+  if (route.params.idAnagrafica != 0) {
+    getRetail(route.params.idAnagrafica)
+  }
+  if (route.params.idPreventivo != 0) {
+    getFiltro(route.params.idPreventivo)
+  }
 }
+checkRouteParams()
 
-function setNuovoCliente() {
-  resetTmpCliente()
-  cliente.value = 'nuovo'
-}
 
-const clientiOptions = ref()
-function getClienti() {
-  loading.value = true
-  const service = new AxiosService('Options/getRetails')
-  service.read()
-    .then(res => clientiOptions.value = res)
-    .catch(err => console.log(err))
-    .finally(() => loading.value = false)
-}
 
-function resetTmpCliente() {
-  tmpCliente.value = {}
-}
 
 function getRetail(id) {
+  console.log('get retail')
   loading.value = true
   const service = new AxiosService('Anagrafiche/Retail/' + id)
   service.read()
-    .then(res => tmpCliente.value = res)
+    .then(res => {
+
+
+
+      objectToPost.value.nomeCliente = res.nome + ' ' + res.cognome
+      objectToPost.value.dataNascita = new Date(res.dataNascita)
+      // .toLocaleDateString('it', {
+      //   year: 'numeric',
+      //   month: '2-digit',
+      //   day: '2-digit',
+      // })
+      objectToPost.value.dataAssunzione = new Date(res.dataAssunzione)
+      // .toLocaleDateString('it', {
+      //   year: 'numeric',
+      //   month: '2-digit',
+      //   day: '2-digit',
+      // })
+      if (res.idSess0 == 1) {
+        objectToPost.value.sesso = 'M'
+      }
+      else if (res.idSesso == 3) {
+        objectToPost.value.sesso = 'F'
+      }
+      else {
+        objectToPost.value.sesso = ''
+      }
+      objectToPost.value.tipoRapporto = res.professione
+      objectToPost.value.redditoRichiedenti = 0
+
+
+
+    })
     .catch(err => console.log(err))
     .finally(() => loading.value = false)
+}
+
+function getFiltro(idPreventivo) {
+  console.log('get filtro')
+  const service = new AxiosService('Preventivatore/GetPreventivi')
+  service.create({
+    idCliente: 0,
+    idAgente: 0,
+    idPreventivo: idPreventivo
+  })
+    .then(res => {
+      objectToPost.value = { ...res[0] }
+      objectToPost.value.redditoRichiedenti.toString().replaceAll(',', '.')
+      objectToPost.value.importoRichiesto.toString().replaceAll(',', '.')
+      objectToPost.value.provvigione.toString().replaceAll(',', '.')
+      ricercaRisultati()
+    })
+}
+
+function creaPratica(item) {
+  console.log("🚀 ~ file: PreventivoCQS.vue:545 ~ creaPratica ~ item", item)
+
+  const praticaToPost = {
+    importoRata: item.Importo_rata,
+    durata: item.Durata,
+    importoInteressi: item.Importo_rata,
+    importoImposta: item.Importo_interessi,
+    importoPolizza: item.Importo_polizza,
+    importoSpeseRegistro: item.Importo_spese_registro,
+    importoSpeseAltre: item.Importo_spese_altre,
+    importoProvvigione: item.Importo_provvigione,
+    importoErogato: item.Importo_erogato,
+    tan: item.TAN,
+    taeg: item.TAEG,
+    teg: item.TEG,
+    descrizioneProdotto: item.Descrizione_prodotto,
+    descrizionePolizza: item.Descrizione_polizza,
+    idStato: item.Stato,
+    istitutoFinanziatore: item.Denominazione_istituto,
+    dataInserimento: null,
+    dataScadenza: null,
+    dataLiquidazione: null,
+    idAgente: store.getters.loggedUser.id,
+    idCliente: route.params.idAnagrafica,
+    percentualeMediazione: objectToPost.value.percentualeMediazione
+  }
+
+  const service = new AxiosService('Pratiche/NuovaPratica/prestito')
+  service.create(praticaToPost)
+    .then(res => {
+      console.log(res)
+    })
+
 }
 
 const genereOptions = [
@@ -299,75 +376,99 @@ const genereOptions = [
   }
 ]
 
+const tipoRapportoOptions = [
+  {
+    text: "Statale"
+  },
+  {
+    text: "Pubblico"
+  },
+  {
+    text: "Privato SPA"
+  },
+  {
+    text: "Privato SRL"
+  },
+  {
+    text: "Medico"
+  },
+  {
+    text: "Pensionato INPS"
+  },
+  {
+    text: "Pensionato altri enti"
+  },
+  {
+    text: "Postale"
+  },
+  {
+    text: "Ferroviere"
+  },
+  {
+    text: "Parapubblico"
+  },
+  {
+    text: "Libero professionista"
+  },
+  {
+    text: "Autonomo"
+  },
+]
+
 
 // PRESTITO
-const tmpPrestito = ref({})
-const durataOptions = [10, 15, 20, 25, 30, 35, 40]
+const durataOptions = [12, 24, 36, 48, 60, 72, 84, 96, 108, 120]
+const have_risultati = ref(true)
+const risultato = ref([])
 
 
-//CALCOLA
-const risultato = ref()
-
-function calcola() {
-
-  const options = {
-    method: 'GET',
-    url: 'https://prestitosi.mediafacile.it/fmi/xml/fmresultset.xml',
-    params: {
-      Passkey: '3A1D8712',
-      Tipo_contratto: 'Prestito',
-      Cliente: 'Emmanuele Durante',
-      Data_nascita: '12-14-1990',
-      Data_assunzione: '02-09-2001',
-      Sesso: 'M',
-      Tipo_rapporto: 'Pubblico',
-      Durata: '48',
-      Importo_richiesto: '10000',
-      Reddito_richiedenti: '70000',
-      ID_listino: '0006',
-      '-new': '',
-      '-lay': 'ws-preventivo',
-      '-db': 'mediafacile-ai-prestitosi',
-      '-script': 'calcola-preventivi-ws'
-    }
-  };
-
-  axios.request(options)
-    .then(function (response) {
-      console.log(response.data);
-    }).catch(function (error) {
-      console.error(error);
-    });
+const objectToPost = ref({
+  nomeCliente: "",
+  dataNascita: "",
+  dataAssunzione: "",
+  dataDecorrenza: null,
+  sesso: "",
+  tipoRapporto: "",
+  durata: 0,
+  durataAnni: 0,
+  tipoTasso: "",
+  finalita: "",
+  provinciaImmobile: "",
+  rinnovo: "",
+  importoRichiesto: 0,
+  importoRata: 0,
+  valoreImmobile: 0,
+  redditoRichiedenti: 0,
+  speseMediazione: 0,
+  provvigione: 0
+})
 
 
-  // const data_nascita = formatData(tmpCliente.value.data_nascita)
-  // const data_assunzione = formatData(tmpCliente.value.data_assunzione)
-  // const service = new AxiosService('axios')
-  // service.readCustomEndpoint(`https://prestitosi.mediafacile.it/fmi/xml/fmresultset.xml?Passkey=3A1D8712&Tipo_contratto=Prestito&Cliente=${tmpCliente.value.nome}&Data_nascita=${data_nascita}&Data_assunzione=${data_assunzione}&Sesso=${tmpCliente.value.genere}&Tipo_rapporto=Pubblico&Durata=${tmpPrestito.value.durata * 12}&Importo_richiesto=${tmpPrestito.value.importo}&Reddito_richiedenti=${tmpPrestito.value.reddito}&ID_listino=0006&-new&-lay=ws-preventivo&-db=mediafacile-ai-prestitosi&-script=calcola-preventivi-ws`)
-  //   .then(res => {
-  //     console.log("🚀 ~ file: PreventivoPrestito.vue ~ line 163 ~ calcola ~ res", res)
-  //     risultato.value = res
-  //   })
-}
 
-function calcolaTeams() {
-  const service = new AxiosService()
-  service.readCustomEndpoint('https://prestitosi.mediafacile.it/fmi/xml/fmresultset.xml?Passkey=3A1D8712&Tipo_contratto=Prestito&Cliente=Emmanuele+Durante&Data_nascita=12-14-1990&Data_assunzione=02-09-2001&Sesso=M&Tipo_rapporto=Pubblico&Durata=48&Importo_richiesto=10000&Reddito_richiedenti=70000&ID_listino=0006&-new=&-lay=ws-preventivo&-db=mediafacile-ai-prestitosi&-script=calcola-preventivi-ws')
-    .then(res => {
-      console.log("🚀 ~ file: PreventivoPrestito.vue ~ line 163 ~ calcolaTeams ~ res", res)
-      risultato.value = res
-    })
-}
+
 
 var parseString = require('xml2js').parseString;
-function paintFakeData() {
+function ricercaRisultati() {
+  loading.value = true
+  risultato.value.splice(0)
+  filteredRisultato.value.splice(0)
+  reducedRisultato.value.splice(0)
 
-  axios.get('https://posadas-core.datarete.cloud/Drive/testData.xml')
+  objectToPost.value.redditoRichiedenti.toString().replaceAll('.', ',')
+  objectToPost.value.importoRichiesto.toString().replaceAll('.', ',')
+  objectToPost.value.provvigione.toString().replaceAll('.', ',')
+  axios.post('https://prestitosi-core.datarete.cloud/api/Preventivatore/PreventivoPrestito', objectToPost.value)
     .then(response => {
-      console.log("🚀 ~ file: PreventivoPrestito.vue ~ line 321 ~ paintFakeData ~ response", response)
+
       // var self = this;
       parseString(response.data, function (err, result) {
-        console.log("🚀 ~ file: PreventivoPrestito.vue ~ line 222 ~ result", result.fmresultset.resultset[0].record)
+        // console.log("🚀 ~ file: PreventivoPrestito.vue ~ line 222 ~ result", result.fmresultset.resultset[0].record)
+        console.log("🚀 ~ file: PreventivoPrestito.vue ~ line 222 ~ result", result)
+
+        if (result.fmresultset.resultset[0].$.count == 0) {
+          have_risultati.value = false
+          return
+        }
 
         result.fmresultset.resultset[0].record.map(item => {
           return item.field.map(field => {
@@ -417,20 +518,38 @@ function paintFakeData() {
         console.log("🚀 ~ file: PreventivoPrestito.vue ~ line 228 ~ risultato.value", reducedRisultato.value)
       });
     })
+    .finally(() => {
+      loading.value = false
+      const listIstituti = []
+      reducedRisultato.value.forEach(element => {
+        listIstituti.push(element.Denominazione_istituto)
+      })
+
+      istitutiOptions.value = getIstituti(listIstituti)
+    })
 }
+
+
+function getIstituti(array) {
+  return Array.from(new Set(array))
+}
+
 
 const reducedRisultato = ref([])
 const filteredRisultato = ref([])
 
 
-//UTILS
-function formatData(data) {
-  return data.toLocaleDateString('en-EN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).replaceAll("/", "-")
+const finalRisultato = ref([])
+
+const istitutiOptions = ref([])
+const istitutiSelected = ref()
+function filterByIstituto() {
+  finalRisultato.value.splice(0)
+  finalRisultato.value = reducedRisultato.value.filter(x => {
+    x.Denominazione_istituto == istitutiSelected.value
+  })
 }
+
 
 const tmpItem = ref({})
 const modalVisible = ref(false)
@@ -440,9 +559,18 @@ function showModal(item) {
   tmpItem.value = { ...item }
 }
 
-function hideModal() {
-  tmpItem.value = {}
-  modalVisible.value = false
+const objSalvaPreventivo = ref({})
+function salvaPreventivo() {
+  loading.value = true
+  objSalvaPreventivo.value = { ...objectToPost.value, numeroRisultati: reducedRisultato.value.length, IDCliente: route.params.idAnagrafica }
+  const service = new AxiosService('Preventivatore/SalvaPreventivo/prestito')
+  service.create(objSalvaPreventivo.value)
+    .then(res => {
+      console.log(res)
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 
 function formateDivise(string) {
@@ -453,8 +581,75 @@ function formateDivise(string) {
   })
 }
 
-// SET UP COMPONENT
-getClienti()
+// OPEN PRATICA
+function openPreventivo(event) {
+  console.log("🚀 ~ file: PreventivoPrestito.vue:469 ~ openPreventivo ~ event", event)
+
+}
+
+const isValidFilter = computed({
+  get() {
+    if (
+      valid_nomeCliente.value
+      && valid_dataNascita.value
+      && valid_dataAssunzione.value
+      && valid_sesso.value
+      && valid_tipoRapporto.value
+      && valid_redditoRichiedenti.value
+      && valid_importoRichiesto.value
+      && valid_provvigione.value
+      && valid_durata.value
+    ) return true
+    return false
+  }
+})
+
+const valid_nomeCliente = computed({
+  get() {
+    return objectToPost.value.nomeCliente.length <= 0 ? false : true
+  }
+})
+const valid_dataNascita = computed({
+  get() {
+    return objectToPost.value.dataNascita.length <= 0 ? false : true
+  }
+})
+const valid_dataAssunzione = computed({
+  get() {
+    return objectToPost.value.dataAssunzione.length <= 0 ? false : true
+  }
+})
+const valid_sesso = computed({
+  get() {
+    return objectToPost.value.sesso.length <= 0 ? false : true
+  }
+})
+const valid_tipoRapporto = computed({
+  get() {
+    return objectToPost.value.tipoRapporto.length <= 0 ? false : true
+  }
+})
+const valid_redditoRichiedenti = computed({
+  get() {
+    return objectToPost.value.redditoRichiedenti == 0 ? false : true
+  }
+})
+const valid_importoRichiesto = computed({
+  get() {
+    return objectToPost.value.importoRichiesto == 0 ? false : true
+  }
+})
+const valid_provvigione = computed({
+  get() {
+    return objectToPost.value.provvigione == 0 ? false : true
+  }
+})
+const valid_durata = computed({
+  get() {
+    return objectToPost.value.durata == 0 ? false : true
+  }
+})
+
 </script>
 
 <style lang="scss" scoped>

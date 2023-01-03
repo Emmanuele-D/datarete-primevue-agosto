@@ -5,8 +5,8 @@
       <h1 class="h3 mb-4 font-weight-normal">{{ company.nome }}</h1>
 
       <h2>Seleziona il livello di Login</h2>
-      <Dropdown class="mb-3" v-model="level_selected" :showClear="true" optionLabel="Nome" optionValue="Id"
-        placeholder="Seleziona un'opzione" :options="level_options"></Dropdown>
+      <Dropdown :filter="true" class="mb-3" v-model="level_selected" :showClear="true" optionLabel="Nome"
+        optionValue="Id" placeholder="Seleziona un'opzione" :options="level_options"></Dropdown>
 
       <button @click="setLoginLevel" :disabled="!level_selected" class="btn btn-lg btn-primary btn-block" type="submit">
         Entra

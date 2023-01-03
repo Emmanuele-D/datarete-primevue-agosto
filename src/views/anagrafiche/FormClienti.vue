@@ -20,8 +20,9 @@
           </div>
           <div class="flex flex-column col-12 col-md-4">
             <label for="sex">Sesso</label>
-            <Dropdown id="sex" :showClear="true" :options="options.sex" v-model="anagraficaClienti.idSesso"
-              optionValue="value" optionLabel="text" placeholder="Seleziona un'opzione"></Dropdown>
+            <Dropdown :filter="true" id="sex" :showClear="true" :options="options.sex"
+              v-model="anagraficaClienti.idSesso" optionValue="value" optionLabel="text"
+              placeholder="Seleziona un'opzione"></Dropdown>
           </div>
           <div class="flex flex-column col-12 col-md-4">
             <label for="birth-date">Data di nascita</label>
@@ -33,14 +34,15 @@
           </div>
           <div class="flex flex-column col-6 col-md-3">
             <label for="birth-nation">Nazione Nascita</label>
-            <Dropdown id="birth-nation" :showClear="true" :options="options.birthNation" optionLabel="nome"
-              optionValue="id" placeholder="Seleziona un'opzione" v-model="anagraficaClienti.idNazioneNascita"
-              @change="getRegions(anagraficaClienti.idNazioneNascita)"></Dropdown>
+            <Dropdown :filter="true" id="birth-nation" :showClear="true" :options="options.birthNation"
+              optionLabel="nome" optionValue="id" placeholder="Seleziona un'opzione"
+              v-model="anagraficaClienti.idNazioneNascita" @change="getRegions(anagraficaClienti.idNazioneNascita)">
+            </Dropdown>
           </div>
           <div class="flex flex-column col-6 col-md-3">
             <label for="birth-region">Regione Nascita</label>
-            <Dropdown id="birth-nation" :showClear="true" :options="options.birthRegion" optionLabel="nome"
-              optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
+            <Dropdown :filter="true" id="birth-nation" :showClear="true" :options="options.birthRegion"
+              optionLabel="nome" optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
               emptyMessage="Seleziona prima una nazione..." placeholder="Seleziona un'opzione"
               v-model="anagraficaClienti.idRegioneNascita" @change="getProvinces(anagraficaClienti.idRegioneNascita)"
               :filter="true">
@@ -48,8 +50,8 @@
           </div>
           <div class="flex flex-column col-6 col-md-3">
             <label for="birth-province">Provincia Nascita</label>
-            <Dropdown id="birth-province" :showClear="true" :options="options.birthProvince" optionLabel="nome"
-              optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
+            <Dropdown :filter="true" id="birth-province" :showClear="true" :options="options.birthProvince"
+              optionLabel="nome" optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
               emptyMessage="Seleziona prima una regione..." placeholder="Seleziona un'opzione"
               v-model="anagraficaClienti.idProvinciaNascita" @change="getCities(anagraficaClienti.idProvinciaNascita)"
               :filter="true">
@@ -57,20 +59,23 @@
           </div>
           <div class="flex flex-column col-6 col-md-3">
             <label for="birth-city">Città Nascita</label>
-            <Dropdown id="birth-city" :showClear="true" :options="options.birthCity" optionLabel="nome" optionValue="id"
-              emptyFilterMessage="Nessuna corrispondenza trovata" emptyMessage="Seleziona prima una provincia..."
-              placeholder="Seleziona un'opzione" v-model="anagraficaClienti.idCittaNascita" :filter="true"></Dropdown>
+            <Dropdown :filter="true" id="birth-city" :showClear="true" :options="options.birthCity" optionLabel="nome"
+              optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
+              emptyMessage="Seleziona prima una provincia..." placeholder="Seleziona un'opzione"
+              v-model="anagraficaClienti.idCittaNascita" :filter="true"></Dropdown>
           </div>
           <div class="flex flex-column col-12 col-md-4">
             <label for="marital-status">Stato Civile</label>
-            <Dropdown id="marital-status" :showClear="true" :options="options.maritalStatus" optionLabel="text"
-              optionValue="value" placeholder="Seleziona un'opzione" v-model="anagraficaClienti.idStatoCivile">
+            <Dropdown :filter="true" id="marital-status" :showClear="true" :options="options.maritalStatus"
+              optionLabel="text" optionValue="value" placeholder="Seleziona un'opzione"
+              v-model="anagraficaClienti.idStatoCivile">
             </Dropdown>
           </div>
           <div class="flex flex-column col-12 col-md-4">
             <label for="job-activity-type">Tipo Occupazione</label>
-            <Dropdown id="job-activity-type" :showClear="true" :options="options.jobActivityType" optionLabel="text"
-              optionValue="value" placeholder="Seleziona un'opzione" v-model="anagraficaClienti.idTipoOccupazione">
+            <Dropdown :filter="true" id="job-activity-type" :showClear="true" :options="options.jobActivityType"
+              optionLabel="text" optionValue="value" placeholder="Seleziona un'opzione"
+              v-model="anagraficaClienti.idTipoOccupazione">
             </Dropdown>
           </div>
           <div class="flex flex-column col-12 col-md-4">
@@ -126,14 +131,15 @@
             </div>
             <div class="flex flex-column col-6 col-md-3">
               <label for="birth-nation">Nazione </label>
-              <Dropdown id="birth-nation" :showClear="true" :options="options.birthNation" optionLabel="nome"
-                optionValue="id" placeholder="Seleziona un'opzione" v-model="anagraficaClienti.idNazioneNascita"
-                @change="getRegions(anagraficaClienti.idNazioneNascita)"></Dropdown>
+              <Dropdown :filter="true" id="birth-nation" :showClear="true" :options="options.birthNation"
+                optionLabel="nome" optionValue="id" placeholder="Seleziona un'opzione"
+                v-model="anagraficaClienti.idNazioneNascita" @change="getRegions(anagraficaClienti.idNazioneNascita)">
+              </Dropdown>
             </div>
             <div class="flex flex-column col-6 col-md-3">
               <label for="birth-region">Regione </label>
-              <Dropdown id="birth-nation" :showClear="true" :options="options.birthRegion" optionLabel="nome"
-                optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
+              <Dropdown :filter="true" id="birth-nation" :showClear="true" :options="options.birthRegion"
+                optionLabel="nome" optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
                 emptyMessage="Seleziona prima una nazione..." placeholder="Seleziona un'opzione"
                 v-model="anagraficaClienti.idRegioneNascita" @change="getProvinces(anagraficaClienti.idRegioneNascita)"
                 :filter="true">
@@ -141,8 +147,8 @@
             </div>
             <div class="flex flex-column col-6 col-md-3">
               <label for="birth-province">Provincia </label>
-              <Dropdown id="birth-province" :showClear="true" :options="options.birthProvince" optionLabel="nome"
-                optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
+              <Dropdown :filter="true" id="birth-province" :showClear="true" :options="options.birthProvince"
+                optionLabel="nome" optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
                 emptyMessage="Seleziona prima una regione..." placeholder="Seleziona un'opzione"
                 v-model="anagraficaClienti.idProvinciaNascita" @change="getCities(anagraficaClienti.idProvinciaNascita)"
                 :filter="true">
@@ -150,7 +156,7 @@
             </div>
             <div class="flex flex-column col-6 col-md-3">
               <label for="birth-city">Città </label>
-              <Dropdown id="birth-city" :showClear="true" :options="options.birthCity" optionLabel="nome"
+              <Dropdown :filter="true" id="birth-city" :showClear="true" :options="options.birthCity" optionLabel="nome"
                 optionValue="id" emptyFilterMessage="Nessuna corrispondenza trovata"
                 emptyMessage="Seleziona prima una provincia..." placeholder="Seleziona un'opzione"
                 v-model="anagraficaClienti.idCittaNascita" :filter="true"></Dropdown>

@@ -24,8 +24,8 @@
         <label class="custom-file-input-label" for="imgprofilo">
           <i v-if="!isSending" class="pi pi-fw pi-pencil"></i>
           <i v-else class="pi pi-spin pi-spinner"></i>
-          <input ref="file" @change="uploadFile" class="custom-file-input" type="file" id="imgprofilo" name="imgprofilo"
-            accept="image/*" capture>
+          <input ref="file" @change="uploadFileAvatar" class="custom-file-input" type="file" id="imgprofilo"
+            name="imgprofilo" accept="image/*" capture>
         </label>
       </div>
 
@@ -44,14 +44,24 @@
       <InputText :class="{ 'red-border': saveDisabled }" id="cognome" type="text" v-model="tmpUser.cognome">
       </InputText>
     </div>
-    <div class="flex flex-column col-12 col-md-7 mb-2">
+    <div class="flex flex-column col-12 col-md-6 mb-2">
       <label for="email">Email</label>
       <InputText :class="{ 'red-border': saveDisabled }" id="email" type="email" v-model="tmpUser.email">
       </InputText>
     </div>
     <div class="flex flex-column col-12 col-md-6 mb-2">
+      <label for="email">Permalink</label>
+      <InputText type="text" v-model="tmpUser.permalink">
+      </InputText>
+    </div>
+    <div class="flex flex-column col-12 col-md-6 mb-2">
+      <label for="email">Numero VoiSpeed</label>
+      <InputText type="text" v-model="tmpUser.numero_voispeed">
+      </InputText>
+    </div>
+    <div class="flex flex-column col-12 col-md-6 mb-2">
       <label for="telefono">Telefono</label>
-      <InputText :class="{ 'red-border': saveDisabled }" id="telefono" type="text" v-model="tmpUser.telefono">
+      <InputText id="telefono" type="text" v-model="tmpUser.telefono">
       </InputText>
     </div>
     <div class="flex flex-column col-12 col-md-6 mb-2">
@@ -86,8 +96,8 @@
     </div>
     <div class="  flex flex-column col-12 col-md-6 mb-2">
       <label for="livelliAbilitati">Utente Padre</label>
-      <Dropdown id="sedi" v-model="tmpUser.id_padre" :options="usersOptions" optionLabel="Nome" optionValue="Id"
-        :filter="true" filterPlaceholder="Cerca...">
+      <Dropdown :filter="true" id="sedi" v-model="tmpUser.id_padre" :options="usersOptions" optionLabel="Nome"
+        optionValue="Id" filterPlaceholder="Cerca...">
       </Dropdown>
     </div>
     <div class="  flex flex-column col-12 col-md-6 mb-2">
@@ -97,26 +107,37 @@
     </div>
     <div class="  flex flex-column col-12 col-md-6 mb-2">
       <label for="livelliAbilitati">Livelli Abilitati</label>
-      <MultiSelect :class="{ 'red-border': saveDisabled }" id="livelliAbilitati" v-model="tmpUser.livelliAbilitati"
-        :options="loginLevelOptions" optionLabel="Nome" optionValue="Id">
+      <MultiSelect :filter="true" :class="{ 'red-border': saveDisabled }" id="livelliAbilitati"
+        v-model="tmpUser.livelliAbilitati" :options="loginLevelOptions" optionLabel="Nome" optionValue="Id">
       </MultiSelect>
     </div>
     <div class="  flex flex-column col-12 col-md-6 mb-2">
       <label for="livelliAbilitati">Sedi abilitate</label>
-      <MultiSelect id="sedi" v-model="tmpUser.sediAzienda" :options="sediOptions" optionLabel="nome" optionValue="id">
+      <MultiSelect :filter="true" id="sedi" v-model="tmpUser.sediAzienda" :options="sediOptions" optionLabel="nome"
+        optionValue="id">
       </MultiSelect>
     </div>
     <div class="  flex flex-column col-12 col-md-6 mb-2">
       <label for="livelliAbilitati">Prodotti Abilitati</label>
-      <MultiSelect id="prodottiAbilitati" v-model="tmpUser.tipiPrdotto" :options="prodottiOptions" optionLabel="text"
-        optionValue="value">
+      <MultiSelect :filter="true" id="prodottiAbilitati" v-model="tmpUser.tipiPrdotto" :options="prodottiOptions"
+        optionLabel="text" optionValue="value">
       </MultiSelect>
     </div>
     <div class="  flex flex-column col-12 col-md-6 mb-2">
       <label for="livelliAbilitati">Banche Abilitate</label>
-      <MultiSelect id="prodottiAbilitati" v-model="tmpUser.banche_abilitate" :options="bancheOptions" optionLabel="nome"
-        optionValue="id">
+      <MultiSelect :filter="true" id="prodottiAbilitati" v-model="tmpUser.banche_abilitate" :options="bancheOptions"
+        optionLabel="nome" optionValue="id">
       </MultiSelect>
+    </div>
+    <div class="flex align-items-center col-12">
+      <div class="flex flex-column col-12 col-md-6 mb-2">
+        <label>Nome Documento</label>
+        <InputText type="text" v-model="titoloDocumento"></InputText>
+      </div>
+      <div class="flex flex-column col-12 col-md-6 mb-2">
+        <FileUpload @uploader="uploadFileDocumento" mode="basic" uploadIcon="pi pi-upload" name="demo[]"
+          :customUpload="true" :previewWidth="50" :maxFileSize="1000000" chooseLabel="Carica Documento" :auto='true' />
+      </div>
     </div>
   </div>
 
@@ -140,14 +161,15 @@ const props = defineProps({
 })
 
 const tmpUser = ref({ ...props.sidebarData.event })
-
+// tmpUser.value.password = 'PrestitoSi'
+// tmpUser.value.livelliAbilitati = [3]
 const toast = useToast()
 const servicePOST = new AxiosService(props.sidebarData.view.endpointPOST)
 const servicePUT = new AxiosService(props.sidebarData.view.endpointPUT)
 
 const isSending = ref(false)
 const file = ref(null)
-function uploadFile() {
+function uploadFileAvatar() {
   console.log("🚀 ~ file: UsersSidebar.vue ~ line 120 ~ uploadFile ~ ev", file.value.files)
 
   const service = new AxiosService('files')
@@ -169,6 +191,28 @@ function uploadFile() {
   }
   return
 }
+
+const titoloDocumento = ref('')
+const urlFile = ref('')
+function uploadFileDocumento(ev) {
+  loading.value = true
+  urlFile.value = ''
+  const service = new AxiosService('files')
+  for (let i = 0; i < ev.files.length; i++) {
+    const formData = new FormData();
+    formData.append("file", ev.files[i]);
+    service.postCustomEndpoint('Upload?type=' + 'UsersFiles', '', formData)
+      .then(res => {
+        console.log("🚀 ~ file: UsersSidebar.vue ~ line 203 ~ uploadFileDocumento ~ res", res)
+        urlFile.value = res
+      })
+      .finally(() => {
+        tmpUser.value.files.push({ nome: titoloDocumento.value, url: urlFile.value })
+        loading.value = false
+      })
+  }
+}
+
 
 const formLoading = ref(false)
 function save() {
@@ -269,13 +313,13 @@ function getUsers() {
 
 
 const saveDisabled = computed(() => {
-  if (tmpUser) {
+  if (tmpUser.value) {
     if (
       !tmpUser.value.nome ||
       !tmpUser.value.cognome ||
-      !tmpUser.value.telefono ||
+      // !tmpUser.value.telefono ||
       !tmpUser.value.username ||
-      tmpUser.value.livelliAbilitati.length == 0
+      !tmpUser.value.livelliAbilitati
     ) {
       return true
     } else {

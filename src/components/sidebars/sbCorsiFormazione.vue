@@ -27,13 +27,13 @@
 
     <div class="flex flex-column col-12">
       <label>Luogo</label>
-      <Dropdown v-model="tempItem.luogo" :options="luogoOptions" optionLabel="text">
+      <Dropdown :filter="true" v-model="tempItem.luogo" :options="luogoOptions" optionLabel="text">
       </Dropdown>
     </div>
 
     <div class="flex flex-column col-12">
       <label>Partecipanti</label>
-      <Dropdown v-model="tempItem.partecipanti" :options="partecipantiOptions" optionLabel="text">
+      <Dropdown :filter="true" v-model="tempItem.partecipanti" :options="partecipantiOptions" optionLabel="text">
       </Dropdown>
     </div>
 

@@ -1,7 +1,7 @@
 .sidebar {
   width: $sidebarWidth;
   height: calc(100% - 50px);
-  background-color: #202020;
+  background-color: #0e3996;
   position: fixed;
   top: 0;
   left: -$sidebarWidth;
@@ -14,17 +14,17 @@
   .sidebar-header {
     height: 80px;
     width: 100%;
-    background-color: #1c1c1c;
+    background-color: #0e3996;
     color: #333333;
     margin-bottom: 50px;
     padding: 0px 20px;
 
     .logo-image {
       margin-top: 15px;
-      width: 80px;
+      width: 150px;
       height: 80px;
-      border-radius: 50%;
-      background-color: #fff;
+      // border-radius: 50%;
+      // background-color: #fff;
       background-position: center center;
       background-size: cover;
     }
@@ -33,7 +33,7 @@
   .sidebar-group-lable {
     margin-top: 10px;
     padding: 14px 14px 10px;
-    color: #515151;
+    color: #fbff3d;
     text-transform: uppercase;
     font-weight: 600;
     font-size: 13px;
@@ -63,7 +63,7 @@
         align-items: center;
         transition: color 0.2s, background-color 0.2s;
         user-select: none;
-        background-color: #1c1c1c;
+        background-color: #194b9f;
 
         &:hover {
           color: #fff;
@@ -110,7 +110,7 @@
     &.submenu {
       border-bottom: none;
       padding-left: 1rem;
-      background-color: #202020;
+      background-color: #194b9f;
 
       li {
         border-top: none;
@@ -122,7 +122,7 @@
 
         a {
           padding: 0.8em 1em;
-          background-color: #202020;
+          background-color: #194b9f;
           color: #929292;
 
           &:hover {

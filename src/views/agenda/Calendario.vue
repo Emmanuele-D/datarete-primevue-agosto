@@ -2,10 +2,10 @@
   <Card class="mb-4">
     <template #content>
       <div class="flex justify-content-end">
-        <MultiSelect optionLabel="text" optionValue="value" placeholder="Condividi calendario"
+        <MultiSelect :filter="true" optionLabel="text" optionValue="value" placeholder="Condividi calendario"
           :options="sidebarEventiData.userOptions" class="mr-4" v-model="userSelected"></MultiSelect>
-        <Dropdown optionLabel="text" optionValue="value" placeholder="Visualizza condiviso" :options="users"
-          class="mr-4"></Dropdown>
+        <Dropdown :filter="true" optionLabel="text" optionValue="value" placeholder="Visualizza condiviso"
+          :options="users" class="mr-4"></Dropdown>
         <Button :loading="genLoading" @click="showSidebarEventi" label="Crea Evento"></Button>
       </div>
     </template>
@@ -84,6 +84,7 @@ function hideSidebarEventi() {
 }
 const callsToCalendar = ref(0)
 function refreshCalendar() {
+  hideSidebarEventi()
   callsToCalendar.value++
 }
 

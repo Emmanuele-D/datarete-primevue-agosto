@@ -1,11 +1,12 @@
 
 
 <script setup>
-import { ref, computed, reactive, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { FilterMatchMode, FilterOperator } from "primevue/api";
 import { useStore } from 'vuex'
 import TableSkeleton from './skeletons/TableSkeleton.vue';
 
+// eslint-disable-next-line no-undef
 const props = defineProps({
   headersConfig: Array,
   data: Array,
@@ -13,7 +14,8 @@ const props = defineProps({
   showAzioni: Boolean
 });
 
-const emit = defineEmits(['event_editRowItem', 'event_ShowSidebar_eye'])
+// eslint-disable-next-line no-undef, no-unused-vars
+const emit = defineEmits(['event_editRowItem', 'event_ShowSidebar_eye', 'onPage', 'onSort'])
 
 const store = useStore()
 
@@ -148,6 +150,8 @@ function getBadgeColor(value, colors) {
     'background-color': 'grey'
   }
 }
+
+
 </script>
 
 <template>
@@ -167,12 +171,12 @@ function getBadgeColor(value, colors) {
 
             <Menubar :model="config.menuItems" class="w-100">
 
-              <template #end>
+              <!-- <template #end>
                 <span class="p-input-icon-left">
                   <i class="pi pi-search" />
                   <InputText v-model="filtersObj['global'].value" placeholder="Cerca..." />
                 </span>
-              </template>
+              </template> -->
             </Menubar>
           </div>
         </template>
@@ -182,9 +186,11 @@ function getBadgeColor(value, colors) {
     <div>
       <Card>
         <template #content>
-          <DataTable :value="data" :stripedRows="config.zebra" v-model:filters="filtersObj"
-            :globalFilterFields="globalFilters" filterDisplay="menu" :paginator="true" :rows="10"
-            :resizableColumns="true" :scrollable="true" table-layout="auto" ref="dt">
+          <DataTable @sort="$emit('onSort', $event)" @page="$emit('onPage', $event)" :value="data"
+            :stripedRows="config.zebra" :lazy="config.lazy" :totalRecords="config.totalRecords"
+            v-model:filters="filtersObj" :globalFilterFields="globalFilters" filterDisplay="menu" :paginator="true"
+            :rows="10" :resizableColumns="true" :scrollable="true" table-layout="auto" ref="dt"
+            :loading="config.loading">
             <template #header>
               <div style="text-align: right">
                 <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
@@ -194,8 +200,8 @@ function getBadgeColor(value, colors) {
               <template #body="{ data }">
                 <div class="flex">
                   <i role="button" class="pi pi-fw pi-eye" @click="$emit('event_ShowSidebar_eye', data)"></i>
-                  <i role="button" class="ml-3 pi pi-fw pi-cog" @click="toggle($event, data)" aria-haspopup="true"
-                    aria-controls="overlay_tmenu"></i>
+                  <!-- <i role="button" class="ml-3 pi pi-fw pi-cog" @click="toggle($event, data)" aria-haspopup="true"
+                    aria-controls="overlay_tmenu"></i> -->
                 </div>
                 <TieredMenu id="overlay_tmenu" ref="menu" :model="items" :popup="true">
                   <template #item="{ item }">

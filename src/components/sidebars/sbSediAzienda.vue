@@ -21,8 +21,8 @@
 
     <div class="flex flex-column col-6 ">
       <label for="tipo-sede">Tipo Sede</label>
-      <Dropdown id="tipo-sede" v-model="tempItem.idTipoSede" :options="tipoSedeOptions" optionLabel="nome"
-        optionValue="id" placeholder="Seleziona il tipo di Sede">
+      <Dropdown :filter="true" id="tipo-sede" v-model="tempItem.idTipoSede" :options="tipoSedeOptions"
+        optionLabel="nome" optionValue="id" placeholder="Seleziona il tipo di Sede">
       </Dropdown>
     </div>
 

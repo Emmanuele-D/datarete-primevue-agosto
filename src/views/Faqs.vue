@@ -10,7 +10,7 @@
         </span>
       </div>
       <div class="col">
-        <Dropdown class="p-inputtext-sm" v-model="view_lang" :options="languages" optionLabel="text"
+        <Dropdown :filter="true" class="p-inputtext-sm" v-model="view_lang" :options="languages" optionLabel="text"
           optionValue="value" />
       </div>
       <div class="col text-lg-end">
@@ -47,7 +47,7 @@
   <Sidebar v-model:visible="isSidebarVisible" :dismissable="false" @hide="resetSidebar" position="right"
     class="p-sidebar-lg">
     <div class="mx-3">
-      <h3 class="mb-4">{{  tmpItem == {} ? "New" : "Edit"  }} Faq</h3>
+      <h3 class="mb-4">{{ tmpItem == {} ? "New" : "Edit" }} Faq</h3>
       <div class="p-fluid">
         <div class="p-field mb-4">
           <label for="question">Question</label>

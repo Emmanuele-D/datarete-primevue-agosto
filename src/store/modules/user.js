@@ -36,6 +36,7 @@ const mutations = {
     state.status = "loading";
   },
   [USER_SUCCESS]: (state, resp) => {
+    console.log("🚀 ~ file: user.js:39 ~ resp", resp);
     console.log("🚀 ~ file: user.js ~ line 39 ~ state", state);
     state.status = "success";
     state.user = resp;

@@ -42,6 +42,14 @@ const router = createRouter({
       component: AppLayout,
       children: [
         {
+          path: "/uploader",
+          component: () => import("@/views/Upload.vue"),
+        },
+        {
+          path: "/uploader-contatti",
+          component: () => import("@/views/UploadContatti.vue"),
+        },
+        {
           path: "/testtry1",
           name: "test",
           component: () => import("@/views/TestTry.vue"),
@@ -118,7 +126,7 @@ const router = createRouter({
             {
               path: "clienti",
               name: "clienti",
-              component: () => import("@/views/anagrafiche/Clienti.vue"),
+              component: () => import("@/views/anagrafiche/Retail.vue"),
               meta: {
                 title: "DataRete - Clienti",
               },
@@ -126,7 +134,7 @@ const router = createRouter({
             {
               path: "lead",
               name: "lead",
-              component: () => import("@/views/anagrafiche/Lead.vue"),
+              component: () => import("@/views/anagrafiche/Retail.vue"),
               meta: {
                 title: "DataRete - Lead",
               },
@@ -163,18 +171,18 @@ const router = createRouter({
               component: () => import("@/views/pratiche/DettaglioPratica.vue"),
             },
             {
-              path: "preventivo-mutuo",
+              path: "preventivo-mutuo/:idAnagrafica/:idPreventivo",
               name: "preventivo-mutuo",
               component: () => import("@/views/pratiche/PreventivoMutuo.vue"),
             },
             {
-              path: "preventivo-prestito",
+              path: "preventivo-prestito/:idAnagrafica/:idPreventivo",
               name: "preventivo-prestito",
               component: () =>
                 import("@/views/pratiche/PreventivoPrestito.vue"),
             },
             {
-              path: "preventivo-cqs",
+              path: "preventivo-cqs/:idAnagrafica/:idPreventivo",
               name: "preventivo-cqs",
               component: () => import("@/views/pratiche/PreventivoCQS.vue"),
             },
@@ -224,6 +232,15 @@ const router = createRouter({
           path: "gestione",
           name: "gestione",
           children: [
+            {
+              path: 'elenco-preventivi-salvati',
+              component: () => import('@/views/gestione/ElencoPreventiviSalvati.vue')
+            },
+            {
+              path: "regole-importazione",
+              component: () =>
+                import("@/views/gestione/RegoleDiImportazione.vue"),
+            },
             {
               path: "campagne-marketing",
               component: () => import("@/views/gestione/CampagneMarketing.vue"),
@@ -437,7 +454,12 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   console.log("Authenticated:" + store.getters.isAuthenticated);
-  if (to.name !== "Login" && !store.getters.isAuthenticated) {
+  if (
+    to.name !== "Login" &&
+    to.name !== "ChangePasswordRequest" &&
+    to.name !== "ChangePasswordPerform" &&
+    !store.getters.isAuthenticated
+  ) {
     next({ name: "Login" });
   } else {
     next();

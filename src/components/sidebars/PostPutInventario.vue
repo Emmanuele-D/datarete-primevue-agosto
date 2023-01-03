@@ -14,7 +14,8 @@
     </div>
     <div class="flex flex-column mb-4">
       <label>Categoria</label>
-      <Dropdown :options="categorieOptions" optionLabel="text" optionValue="value" v-model="tmpItem.categoria">
+      <Dropdown :filter="true" :options="categorieOptions" optionLabel="text" optionValue="value"
+        v-model="tmpItem.categoria">
       </Dropdown>
     </div>
     <div class="flex flex-column mb-4">
@@ -23,7 +24,8 @@
     </div>
     <div class="flex flex-column mb-4">
       <label>Sede</label>
-      <Dropdown :options="sediOptions" optionLabel="nome" optionValue="id" v-model="tmpItem.sede"></Dropdown>
+      <Dropdown :filter="true" :options="sediOptions" optionLabel="nome" optionValue="id" v-model="tmpItem.sede">
+      </Dropdown>
     </div>
     <div class="flex flex-column mb-4">
       <label>Quantità</label>

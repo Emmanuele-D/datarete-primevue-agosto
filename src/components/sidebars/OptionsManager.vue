@@ -11,7 +11,7 @@
   <!-- optionals -->
   <div v-if="sidebarData.event.regionsOptions" class="flex flex-column col-12 col-md-5">
     <label for="region-filter">Nazione</label>
-    <Dropdown id="region-filter" :showClear="true" :options="sidebarData.event.regionsOptions"
+    <Dropdown :filter="true" id="region-filter" :showClear="true" :options="sidebarData.event.regionsOptions"
       v-model="sidebarData.event.id_regione" optionValue="id" optionLabel="nome" placeholder="Seleziona un'opzione">
     </Dropdown>
     <label for="sigla">Sigla</label>
@@ -19,7 +19,7 @@
   </div>
   <div v-if="sidebarData.event.nationOptions" class="flex flex-column col-12 col-md-5">
     <label for="nation-filter">Nazione</label>
-    <Dropdown id="nation-filter" :showClear="true" :options="sidebarData.event.nationOptions"
+    <Dropdown :filter="true" id="nation-filter" :showClear="true" :options="sidebarData.event.nationOptions"
       v-model="sidebarData.event.id_nazione" optionValue="id" optionLabel="nome" placeholder="Seleziona un'opzione">
     </Dropdown>
   </div>

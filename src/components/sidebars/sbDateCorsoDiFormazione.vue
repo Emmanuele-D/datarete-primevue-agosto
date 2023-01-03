@@ -25,7 +25,7 @@
 
       <div class="flex flex-column col-12">
         <label>Formatori</label>
-        <Dropdown v-model="tempItem.formatori" :options="formatoriOptions" optionLabel="text">
+        <Dropdown :filter="true" v-model="tempItem.formatori" :options="formatoriOptions" optionLabel="text">
         </Dropdown>
       </div>
 

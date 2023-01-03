@@ -12,14 +12,15 @@
 
     <div class="flex flex-column col-12">
       <label>A quale HelpDesk appartiene</label>
-      <Dropdown v-model="tempItem.id_helpedesk" :options="tipisedeOptions" optionValue="value" optionLabel="text">
+      <Dropdown :filter="true" v-model="tempItem.id_helpedesk" :options="tipisedeOptions" optionValue="value"
+        optionLabel="text">
       </Dropdown>
     </div>
 
 
     <div class="flex flex-column col-12 ">
       <label for="tipo-sede">Utente di riferimento</label>
-      <MultiSelect id="tipo-sede" v-model="tempItem.utenti" :options="utentiOptions" optionLabel="text"
+      <MultiSelect :filter="true" id="tipo-sede" v-model="tempItem.utenti" :options="utentiOptions" optionLabel="text"
         optionValue="value">
       </MultiSelect>
     </div>

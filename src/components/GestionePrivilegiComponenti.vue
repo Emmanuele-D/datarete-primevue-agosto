@@ -5,10 +5,11 @@
         <h5 class="mb-4">{{ componente.nome_componente }}</h5>
 
         <div class="flex justify-content-between mr-4 mb-4">
-          <Dropdown class="w-full mb-2" placeholder="Tipo di visualizzazione" :options="tipoVisualizzazioneOptions"
-            optionLabel="text" optionValue="text" v-model="componente.tipo_visualizzazione"></Dropdown>
+          <Dropdown :filter="true" class="w-full mb-2" placeholder="Tipo di visualizzazione"
+            :options="tipoVisualizzazioneOptions" optionLabel="text" optionValue="text"
+            v-model="componente.tipo_visualizzazione"></Dropdown>
 
-          <MultiSelect class="w-full ml-4 " placeholder="Tipo di accesso" :options="tipoAccessoOptions"
+          <MultiSelect :filter="true" class="w-full ml-4 " placeholder="Tipo di accesso" :options="tipoAccessoOptions"
             optionLabel="text" optionValue="text" v-model="componente.tipo_accesso"></MultiSelect>
         </div>
 

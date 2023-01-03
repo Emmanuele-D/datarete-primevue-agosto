@@ -37,7 +37,7 @@
 
     <div class="flex flex-column col-12 ">
       <label>Provincia</label>
-      <Dropdown :options="provinciaOptions" optionLabel="nome" optionValue="id"></Dropdown>
+      <Dropdown :filter="true" :options="provinciaOptions" optionLabel="nome" optionValue="id"></Dropdown>
     </div>
 
     <div class="flex flex-column col-12 ">
@@ -67,7 +67,7 @@
 
     <div class="flex flex-column col-12 ">
       <label>Iscrizioe OAM</label>
-      <Dropdown :options="['Agente', 'Collaboratore', 'Nessuna']"></Dropdown>
+      <Dropdown :filter="true" :options="['Agente', 'Collaboratore', 'Nessuna']"></Dropdown>
     </div>
 
     <div class="flex flex-column col-12 ">
@@ -86,13 +86,14 @@
 
     <div class="flex flex-column col-12 ">
       <label>Profilo</label>
-      <Dropdown v-model="profiloSelected" :options="['Neofita', 'Settore Credito', 'Settore parallelo']">
+      <Dropdown :filter="true" v-model="profiloSelected" :options="['Neofita', 'Settore Credito', 'Settore parallelo']">
       </Dropdown>
     </div>
 
     <div v-if="profiloSelected == 'Settore parallelo'" class="flex flex-column col-12 ml-4 pl-4">
       <label>Settore Parallelo</label>
-      <Dropdown v-model="profiloSelected" :options="['Assicurativo', 'Immobiliare', 'CAF e Patronato', 'Altro']">
+      <Dropdown :filter="true" v-model="profiloSelected"
+        :options="['Assicurativo', 'Immobiliare', 'CAF e Patronato', 'Altro']">
       </Dropdown>
     </div>
 

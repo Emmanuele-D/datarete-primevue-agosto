@@ -13,18 +13,18 @@
             <form @submit.prevent="handleSubmit">
               <div class="flex flex-column col-12">
                 <label>Mittente</label>
-                <Dropdown v-model="tmpInvio.id_mittente" :options="utentiOptions" optionLabel="text"
+                <Dropdown :filter="true" v-model="tmpInvio.id_mittente" :options="utentiOptions" optionLabel="text"
                   optionValue="value">
                 </Dropdown>
               </div>
               <div class="flex flex-column col-12">
                 <label>Destinatario</label>
-                <Dropdown v-model="tmpInvio.id_destinatario" :options="utentiOptions" optionLabel="text"
+                <Dropdown :filter="true" v-model="tmpInvio.id_destinatario" :options="utentiOptions" optionLabel="text"
                   optionValue="value"></Dropdown>
               </div>
               <div class="flex flex-column col-12">
                 <label for="enterprise">Sede destinazione</label>
-                <Dropdown v-model="tmpInvio.sede_destinazione" :options="sediOptions" optionLabel="nome"
+                <Dropdown :filter="true" v-model="tmpInvio.sede_destinazione" :options="sediOptions" optionLabel="nome"
                   optionValue="id"></Dropdown>
               </div>
               <div class="flex flex-column col-12">

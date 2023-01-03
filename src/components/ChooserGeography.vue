@@ -3,16 +3,16 @@
     <div class="flex flex-column align-items-start flex-grow " style="min-width:20%">
       <label for="nazione">Nazione</label>
       <div class="flex align-items-center w-full mr-2">
-        <Dropdown class="w-full mr-4" @change="getRegioni(nazioneSelected.id)" id="nazione" v-model="nazioneSelected"
-          :options="nazioneOptions" optionLabel="nome" placeholder="Seleziona la Nazione">
+        <Dropdown :filter="true" class="w-full mr-4" @change="getRegioni(nazioneSelected.id)" id="nazione"
+          v-model="nazioneSelected" :options="nazioneOptions" optionLabel="nome" placeholder="Seleziona la Nazione">
         </Dropdown>
       </div>
     </div>
     <div class="flex flex-column align-items-start flex-grow " style="min-width:20%">
       <label for="regione">Regione</label>
       <div class="flex align-items-center w-full mr-2">
-        <Dropdown class="w-full mr-4" @change="getProvince(regioneSelected.id)" id="regione" v-model="regioneSelected"
-          :options="regioneOptions" optionLabel="nome" placeholder="Seleziona la Regione">
+        <Dropdown :filter="true" class="w-full mr-4" @change="getProvince(regioneSelected.id)" id="regione"
+          v-model="regioneSelected" :options="regioneOptions" optionLabel="nome" placeholder="Seleziona la Regione">
         </Dropdown>
 
       </div>
@@ -20,7 +20,7 @@
     <div class="flex flex-column align-items-start flex-grow " style="min-width:20%">
       <label for="provincia">Provincia</label>
       <div class="flex align-items-center w-full mr-2">
-        <Dropdown class="w-full mr-4" @change="getCitta(provinciaSelected.id)" id="provincia"
+        <Dropdown :filter="true" class="w-full mr-4" @change="getCitta(provinciaSelected.id)" id="provincia"
           v-model="provinciaSelected" :options="provinciaOptions" optionLabel="nome"
           placeholder="Seleziona la Provincia">
         </Dropdown>
@@ -30,8 +30,8 @@
     <div class="flex flex-column align-items-start flex-grow " style="min-width:20%">
       <label for="citta">Città</label>
       <div class="flex align-items-center w-full mr-2">
-        <Dropdown class="w-full mr-4" @change="emitGeoFilter" id="citta" v-model="cittaSelected" :options="cittaOptions"
-          optionLabel="nome" placeholder="Seleziona la Città"></Dropdown>
+        <Dropdown :filter="true" class="w-full mr-4" @change="emitGeoFilter" id="citta" v-model="cittaSelected"
+          :options="cittaOptions" optionLabel="nome" placeholder="Seleziona la Città"></Dropdown>
 
       </div>
     </div>

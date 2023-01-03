@@ -15,8 +15,8 @@
         <div class="flex justify-content-between align-items-center mb-2">
           <div class="flex flex-column col-12 col-md-4">
             <label for="nation-filter">Filtra per nazione</label>
-            <Dropdown id="nation-filter" :showClear="true" :options="nationOptions" v-model="nationSelected"
-              optionValue="id" optionLabel="nome" placeholder="Seleziona un'opzione">
+            <Dropdown :filter="true" id="nation-filter" :showClear="true" :options="nationOptions"
+              v-model="nationSelected" optionValue="id" optionLabel="nome" placeholder="Seleziona un'opzione">
             </Dropdown>
           </div>
 

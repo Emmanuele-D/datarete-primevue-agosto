@@ -15,20 +15,22 @@
         <div class="flex justify-content-between align-items-center mb-2">
           <div class="flex flex-column col-12 col-md-4">
             <label for="nation-filter">Nazione</label>
-            <Dropdown id="nation-filter" :showClear="true" :options="nationOptions" v-model="nationSelected"
-              optionValue="id" optionLabel="nome" placeholder="Seleziona un'opzione" @change="getRegions">
+            <Dropdown :filter="true" id="nation-filter" :showClear="true" :options="nationOptions"
+              v-model="nationSelected" optionValue="id" optionLabel="nome" placeholder="Seleziona un'opzione"
+              @change="getRegions">
             </Dropdown>
           </div>
           <div class="flex flex-column col-12 col-md-4">
             <label for="region-filter">Regione</label>
-            <Dropdown id="region-filter" :showClear="true" :options="regionsOptions" v-model="regionSelected"
-              optionValue="id" optionLabel="nome" placeholder="Seleziona un'opzione" @change="getProvinces">
+            <Dropdown :filter="true" id="region-filter" :showClear="true" :options="regionsOptions"
+              v-model="regionSelected" optionValue="id" optionLabel="nome" placeholder="Seleziona un'opzione"
+              @change="getProvinces">
             </Dropdown>
           </div>
           <div class="flex flex-column col-12 col-md-4">
             <label for="region-filter">Provincia</label>
-            <Dropdown id="region-filter" :showClear="true" :options="provincesOptions" v-model="provinceSelected"
-              optionValue="id" optionLabel="nome" placeholder="Seleziona un'opzione">
+            <Dropdown :filter="true" id="region-filter" :showClear="true" :options="provincesOptions"
+              v-model="provinceSelected" optionValue="id" optionLabel="nome" placeholder="Seleziona un'opzione">
             </Dropdown>
           </div>
         </div>

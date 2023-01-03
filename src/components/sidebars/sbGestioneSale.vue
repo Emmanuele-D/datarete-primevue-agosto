@@ -27,7 +27,8 @@
 
   <div class="flex flex-column col-12 mb-4">
     <label>Sede</label>
-    <Dropdown v-model="tmpItem.sedeAzienda" :options="sediOptions" optionLabel="nome" optionValue="id"></Dropdown>
+    <Dropdown :filter="true" v-model="tmpItem.sedeAzienda" :options="sediOptions" optionLabel="nome" optionValue="id">
+    </Dropdown>
   </div>
 
 

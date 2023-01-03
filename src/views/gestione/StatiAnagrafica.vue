@@ -19,30 +19,20 @@
         <div v-if="contentLoading" class="content-loading">
           <Skeleton></Skeleton>
         </div>
-        <div v-else>
-          <VueDraggableNext class="dragArea list-group" :list="statiAnagrafiche" @change="dragged($event)">
-            <div class="list-group-item" v-for="element in statiAnagrafiche" :key="element.id">
-              <div>
-                <Chip v-if="element.displayLead" label="Lead" icon="pi pi-flag" class="mr-2 mb-2 custom-chip" />
-                <Chip v-if="element.displayCliente" label="Cliente" icon="pi pi-users" class="mr-2 mb-2 custom-chip" />
+        <div v-else-if="statiAnagrafiche">
 
+          <nested-draggable @showSidebar="showStatoAnagrafica({})" @end="onEnd" :tasks="statiAnagrafiche">
+          </nested-draggable>
 
-                <span>{{ element.nome }}</span>
-              </div>
-              <div>
-                <Button @click="showStatoAnagrafica(element)" icon="pi pi-fw pi-pencil"
-                  class="mr-2 p-button-rounded p-button-info"></Button>
-                <Button @click="confirmDelete(element)" icon="pi pi-fw pi-trash"
-                  class="p-button-rounded p-button-danger"></Button>
-              </div>
-            </div>
-          </VueDraggableNext>
         </div>
+
       </template>
     </Card>
 
+
+
     <Sidebar v-model:visible="statoAnagraficaVisible" :baseZIndex="10000" position="right" class="p-sidebar-md"
-      @hide="$emit('event_HideStatoAnagrafica')">
+      @hide="$emit('event_HideStatoAnagrafica')" @event_refreshList="hideSidebar">
 
       <StatoAnagrafica :sidebarData="statoAnagraficaData"></StatoAnagrafica>
     </Sidebar>
@@ -59,6 +49,7 @@ import { useToast } from 'primevue/usetoast'
 
 import AxiosService from '@/axiosServices/AxiosService';
 import { VueDraggableNext } from 'vue-draggable-next'
+import nestedDraggable from '../../components/nested.vue'
 import StatoAnagrafica from '../../components/sidebars/StatoAnagrafica.vue'
 
 const store = useStore()
@@ -72,6 +63,14 @@ const contentLoading = computed(() => store.getters.contentLoading)
 
 const confirm = useConfirm()
 const toast = useToast()
+
+function onEnd(event) {
+  console.log("🚀 ~ file: StatiAnagrafica.vue:86 ~ onEnd ~ event", event, statiAnagrafiche.value)
+  const service = new AxiosService()
+  service.updateWithoutId('Options/StatiAnagrafiche/UpdateArrayOrder', statiAnagrafiche.value)
+    .finally(() => getStatiAnagrafiche())
+
+}
 
 function confirmDelete(element) {
   confirm.require({
@@ -107,6 +106,7 @@ function deleteStato(element) {
 const statoAnagraficaVisible = ref(false)
 const statoAnagraficaData = ref()
 function showStatoAnagrafica(event) {
+  console.log("🚀 ~ file: StatiAnagrafica.vue:109 ~ showStatoAnagrafica ~ event", event)
   statoAnagraficaVisible.value = true
   statoAnagraficaData.value = event
 }
@@ -115,7 +115,7 @@ function hideStatoAnagrafica() {
   statoAnagraficaData.value = {}
 }
 
-const serviceGET = new AxiosService('Options/StatiAnagrafiche/GetStati')
+const serviceGET = new AxiosService('Options/StatiAnagrafiche/GetStati/0')
 const statiAnagrafiche = ref()
 
 function getStatiAnagrafiche() {
@@ -125,6 +125,12 @@ function getStatiAnagrafiche() {
       statiAnagrafiche.value = res
       setContentLoading_false()
     })
+}
+
+function hideSidebar() {
+  statoAnagraficaVisible.value = false
+  statoAnagraficaData.value = {}
+  getStatiAnagrafiche()
 }
 
 function dragged(event) {

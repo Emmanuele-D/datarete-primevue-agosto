@@ -17,18 +17,19 @@
     </div>
     <div class="flex flex-column col-12 col-lg-4 mb-4">
       <label for="priorita">Priorità</label>
-      <Dropdown id="priorita" v-model="tmpItem.priorita"
+      <Dropdown :filter="true" id="priorita" v-model="tmpItem.priorita"
         :options="[{ name: 'Urgente', value: 3 }, { name: 'Alta', value: 2 }, { name: 'Normale', value: 1 }, { name: 'Bassa', value: 0 }]"
         optionLabel="name" optionValue="value" />
     </div>
     <div class="flex flex-column col-12 col-lg-4 mb-4">
       <label for="livelli">Livelli</label>
-      <MultiSelect id="livelli" v-model="tmpItem.livelli" :options="livelliOptions" optionLabel="text"
+      <MultiSelect :filter="true" id="livelli" v-model="tmpItem.livelli" :options="livelliOptions" optionLabel="text"
         optionValue="value" />
     </div>
     <div class="flex flex-column col-12 col-lg-4 mb-4">
       <label for="livelli">Sedi</label>
-      <MultiSelect id="livelli" v-model="tmpItem.sedi" :options="sediOptions" optionLabel="nome" optionValue="id" />
+      <MultiSelect :filter="true" id="livelli" v-model="tmpItem.sedi" :options="sediOptions" optionLabel="nome"
+        optionValue="id" />
     </div>
 
 

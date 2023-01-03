@@ -73,7 +73,7 @@ export default {
       invalid: false,
       newPassword: "",
       confirmPassword: "",
-      email: "massimiliano.pighi@arkadiagroup.it",
+      email: "",
       correctEmail: "empty",
       loading: false,
     };

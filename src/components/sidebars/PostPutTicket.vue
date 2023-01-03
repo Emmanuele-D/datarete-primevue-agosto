@@ -25,8 +25,8 @@
       </div>
       <div class="w-full flex flex-column align-items-start mb-4">
         <label class="mb-2">Argomento</label>
-        <Dropdown v-model="tmpItem.id_argomento" class="w-full" placeholder="argomento" :options="argomentiOptions"
-          optionLabel="nome" optionValue="id"></Dropdown>
+        <Dropdown :filter="true" v-model="tmpItem.id_argomento" class="w-full" placeholder="argomento"
+          :options="argomentiOptions" optionLabel="nome" optionValue="id"></Dropdown>
       </div>
       <div class="w-full flex flex-column align-items-start mb-4">
         <label class="mb-2" for="description">Descrizione</label>

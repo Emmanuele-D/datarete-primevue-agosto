@@ -10,36 +10,44 @@
             </div>
           </template>
           <template #content>
-            <h2 class="mb-4">Prestito</h2>
+            <h2 class="mb-4">{{ pratica.TipoProdotto }}</h2>
             <div class="campo-dettaglio mb-3 flex justify-content-between align-items-center">
               <span>Numero</span>
-              <span class="font-semibold">QT10561</span>
+              <span s class="font-semibold">{{ id_pratica }}</span>
             </div>
             <div class="campo-dettaglio mb-3 flex justify-content-between align-items-center">
               <span>Inserita</span>
-              <span>{{ new Date('2022-11-03').toLocaleDateString('it-IT') }}</span>
+              <span>{{ new Date(pratica.dataInserimento).toLocaleString('it-IT', {
+    year: 'numeric', month: '2-digit',
+    day: '2-digit', hour: '2-digit', minute: '2-digit'
+  })
+}}</span>
             </div>
             <div class="campo-dettaglio mb-3 flex justify-content-between align-items-center">
               <span>Cliente</span>
-              <span>PIGHI MASSIMILIANO</span>
+              <span>{{ pratica.Cliente }}</span>
             </div>
             <div class="campo-dettaglio mb-3 flex justify-content-between align-items-center">
-              <span>Agente istituto</span>
-              <a href="#" class=" cursor-pointer">Mario Rossi - Younited</a>
+              <span>Agente</span>
+              <span class=" cursor-pointer">{{ pratica.Agente }}</span>
             </div>
             <div class="campo-dettaglio mb-3 flex justify-content-between align-items-center">
-              <span>Importo</span>
-              <span href="#" class="font-semibold"> € 330.000,00</span>
+              <span>Istituto</span>
+              <span class=" cursor-pointer">{{ pratica.istitutoFinanziatore }}</span>
+            </div>
+            <div class="campo-dettaglio mb-3 flex justify-content-between align-items-center">
+              <span>Importo Erogato</span>
+              <span href="#" class="font-semibold"> € {{ pratica.importoErogato }}</span>
             </div>
             <div class="campo-dettaglio mb-3 flex justify-content-between align-items-center">
               <span>Durata</span>
-              <span href="#" class="font-semibold">25 anni</span>
+              <span href="#" class="font-semibold">{{ pratica.durata }} anni</span>
             </div>
             <Divider></Divider>
             <div class="campo-dettaglio mb-3 flex justify-content-between align-items-center">
               <span>Stato pratica</span>
-              <Dropdown v-model="statoPraticaSelected" :options="statoPraticaOptions" optionLabel="text"
-                optionValue="value" placeholder="Seleziona uno stato" />
+              <Dropdown :filter="true" v-model="pratica.Stato" :options="statoPraticaOptions" optionLabel="text"
+                optionValue="text" placeholder="Seleziona uno stato" />
             </div>
             <div class="text-gray-500">
               <div class="mb-4 flex justify-content-between">
@@ -62,11 +70,118 @@
         <Card>
           <template #content>
             <TabView ref="tabview1">
+              <TabPanel header="Dettagli">
+
+                <div class="grid">
+                  <div class="col-12 flex justify-content-between flex-wrap">
+
+                    <div v-if="!loading" class="col flex flex-column  mb-4">
+                      <label>Agente</label>
+                      <InputText v-model="pratica.Agente">
+                      </InputText>
+                    </div>
+                    <div v-if="!loading" class="col flex flex-column  mb-4">
+                      <label>Cliente</label>
+                      <InputText type="text" v-model="pratica.Cliente">
+                      </InputText>
+                    </div>
+
+                  </div>
+
+                  <div class="col-12 flex justify-content-between flex-wrap">
+                    <div class="flex flex-column  mb-4 col">
+                      <label>Tipo</label>
+                      <InputText type="text" placeholder="Tipo operazione" v-model="pratica.TipoProdotto"></InputText>
+                    </div>
+
+                    <div class="flex flex-column  mb-4 col">
+                      <label>Prodotto</label>
+                      <InputText type="text" placeholder="Tipo operazione" v-model="pratica.descrizioneProdotto">
+                      </InputText>
+                    </div>
+
+                    <div class="flex flex-column  mb-4 col">
+                      <label>Istituto</label>
+                      <InputText type="text" placeholder="Tipo operazione" v-model="pratica.istitutoFinanziatore">
+                      </InputText>
+                    </div>
+                  </div>
+
+                  <div class="col-12 flex justify-content-between flex-wrap">
+                    <div class="flex col  flex-column  mb-4">
+                      <label>Rata</label>
+                      <InputText type="text" placeholder="Tipo operazione" v-model="pratica.importoRata"></InputText>
+                    </div>
+
+                    <div class="flex col  flex-column  mb-4">
+                      <label>Durata</label>
+                      <InputText type="text" placeholder="Tipo operazione" v-model="pratica.durata"></InputText>
+                    </div>
+
+                    <div class="flex col  flex-column  mb-4">
+                      <label>Montante</label>
+                      <InputText type="text" placeholder="Tipo operazione" v-model="pratica.montante"></InputText>
+                    </div>
+
+                    <div class="flex col  flex-column  mb-4">
+                      <label>TAN</label>
+                      <InputText type="text" placeholder="Tipo operazione" v-model="pratica.tan"></InputText>
+                    </div>
+                  </div>
+
+                  <div class="col-12 flex justify-content-between flex-wrap">
+                    <div class="flex col  flex-column  mb-4">
+                      <label>Data decorrenza</label>
+                      <Calendar v-model="pratica.dataDecorrenza"></Calendar>
+                    </div>
+                    <div class="flex col  flex-column  mb-4">
+                      <label>Data scandenza</label>
+                      <Calendar v-model="pratica.dataScadenza"></Calendar>
+                    </div>
+                    <div class="flex col  flex-column  mb-4">
+                      <label>Data rinnovo</label>
+                      <Calendar v-model="pratica.dataRinnovo"></Calendar>
+                    </div>
+                  </div>
+
+                  <div class="col-12 flex flex-wrap justify-content-between">
+                    <div class="flex col flex-column mr-4">
+                      <label>Erogato</label>
+                      <InputNumber type="number" v-model="pratica.erogato"></InputNumber>
+                    </div>
+                    <div class="flex col flex-column">
+                      <label>Importo Richiesto</label>
+                      <InputNumber type="number" v-model="pratica.importo_richiesto"></InputNumber>
+                    </div>
+                    <div class="flex col flex-column">
+                      <label>Valore attuale</label>
+                      <InputNumber type="number" v-model="pratica.valore_attuale"></InputNumber>
+                    </div>
+                  </div>
+
+
+
+                  <div class="flex justify-content-end mb-4 w-full">
+
+                    <Button :loading="loading" label="Salva"></Button>
+
+                  </div>
+                </div>
+
+              </TabPanel>
               <TabPanel header="Storico">
-                <CrmLayout :showLeftSideMenu="false" :showRightSideMenu="false"></CrmLayout>
+                <Card class="mb-2 " v-for="item of tutteLeAttivita" :key="item.id">
+                  <template #content>
+                    <CrmItemNota @confirmDeleteItem="confirmDeleteItem($event)" @reloadFeed="getCrmItems"
+                      v-if="item.id_type == 1" :item="item">
+                    </CrmItemNota>
+                    <CrmItemAppuntamento v-if="item.id_type == 2" :item="item"></CrmItemAppuntamento>
+                    <CrmItemPratica v-if="item.id_type == 3" :item="item"></CrmItemPratica>
+                  </template>
+                </Card>
               </TabPanel>
               <TabPanel header="Documenti">
-                <TestTry2></TestTry2>
+                <Documenti></Documenti>
               </TabPanel>
               <TabPanel header="Compensi">
                 <DataTable :value="compensiData" :stripedRows="true" :paginator="true" :rows="10"
@@ -78,19 +193,22 @@
                   </Column>
                   <Column field="descrizione" header="Descrizione"></Column>
                   <Column field="tipo" header="Tipo"></Column>
-                  <Column field="importo" header="Importo" #body="{ data }">
-                    <span
-                      :class="{ 'text-pink-500': data.tipo == 'Uscita', 'text-green-500': data.tipo == 'Entrata' }">€ {{
-                          data.importo.toFixed(2)
-                      }}</span>
+                  <Column field="importo" header="Importo">
+                    <template #body="{ data }">
+                      <span
+                        :class="{ 'text-pink-500': data.tipo == 'Uscita', 'text-green-500': data.tipo == 'Entrata' }">€
+                        {{
+    data.importo.toFixed(2)
+}}</span>
+                    </template>
                   </Column>
                   <Column field="stato" header="Stato"></Column>
                 </DataTable>
               </TabPanel>
               <TabPanel header="Appunti">
-                <Textarea :rows="10" v-model="appunti"></Textarea>
+                <Textarea :rows="10" v-model="pratica.NotaGenerale"></Textarea>
                 <div class="flex justify-content-end w-full">
-                  <Button label="Salva"></Button>
+                  <Button :loading="loading" @click="aggiornaNotaPratica" label="Salva appunti"></Button>
                 </div>
               </TabPanel>
 
@@ -110,37 +228,6 @@
                       <Button @click="showSidebarQuestionari" icon="pi pi-pencil" class="p-button-rounded"></Button>
                     </template>
                   </Column>
-                </DataTable>
-              </TabPanel>
-              <TabPanel header="Altri Impegni">
-                <DataTable :value="altriImpegniData" :stripedRows="true" :paginator="true" :rows="10"
-                  :resizableColumns="true" :scrollable="true" table-layout="auto" ref="dt">
-                  <Column header="Azioni">
-                    <template #body="{ data }">
-                      <Button @click="showSidebarAltriImpegni(data)" icon="pi pi-pencil" class="p-button-rounded" />
-                    </template>
-                  </Column>
-                  <Column field="tipo" header="Tipo"></Column>
-                  <Column field="decorrenza" header="Decorrenza"></Column>
-                  <Column field="importo_rata" header="Importo Rata"></Column>
-                  <Column field="gestione" header="Gestione"></Column>
-                  <Column field="erogato" header="Erogato">
-                    <template #body="{ data }">
-                      <i v-if="data.erogato" class="pi pi-check"></i>
-                      <i v-else class="pi pi-times"></i>
-                    </template>
-                  </Column>
-                  <Column field="istituto" header="Istituto"></Column>
-                  <Column field="durata_rate" header="Durata Rate"></Column>
-                  <Column field="tan" header="TAN"></Column>
-                  <Column field="estingue" header="Estingue">
-                    <template #body="{ data }">
-                      <i v-if="data.estingue" class="pi pi-check"></i>
-                      <i v-else class="pi pi-times"></i>
-                    </template>
-                  </Column>
-                  <Column field="perc_mediazione" header="perc_mediazione"></Column>
-
                 </DataTable>
               </TabPanel>
             </TabView>
@@ -215,16 +302,15 @@
 </template>
 
 <script setup>
+import AxiosService from '@/axiosServices/AxiosService';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router'
-
-import TestTry2 from '../TestTry2.vue';
-import CrmLayout from '../CRM/CrmLayout.vue';
+import Documenti from '@/components/Documenti.vue'
 
 const route = useRoute()
 const id_pratica = route.params.idPratica
 
-const statoPraticaSelected = ref(2)
+
 const statoPraticaOptions = ref([
   {
     value: 0,
@@ -243,6 +329,22 @@ const statoPraticaOptions = ref([
     text: 'Chiusa'
   },
 ])
+
+const pratica = ref({})
+
+function getData() {
+  const service = new AxiosService('Pratiche/GetPratica/' + route.params.idPratica)
+  service.read()
+    .then(res => {
+
+      pratica.value = res
+
+      res.dataDecorrenza ? pratica.value.dataDecorrenza = new Date(res.dataDecorrenza) : ''
+      res.dataScadenza ? pratica.value.dataScadenza = new Date(res.dataScadenza) : ''
+      res.dataRinnovo ? pratica.value.dataRinnovo = new Date(res.dataRinnovo) : ''
+
+    })
+}
 
 const compensiData = ref([
   {
@@ -282,50 +384,22 @@ function showSidebarQuestionari(event) {
   console.log(event)
 }
 
-const altriImpegniData = ref([
-  {
-    tipo: 'Prestito',
-    decorrenza: '22/11/2022',
-    importo_rata: 1170,
-    gestione: 'younited',
-    erogato: false,
-    istituto: 'younited',
-    durata_rate: '25 anni',
-    tan: '3',
-    estingue: true,
-    perc_mediazione: 3
-  },
-  {
-    tipo: 'Prestito',
-    decorrenza: '11/11/2022',
-    importo_rata: 120,
-    gestione: '--',
-    erogato: true,
-    istituto: '--',
-    durata_rate: '30 anni',
-    tan: '2',
-    estingue: false,
-    perc_mediazione: 5
-  }
-])
 
-const sidebarAltriImpegniVisible = ref(false)
-const sidebarAltriImpegniData = ref({
-  tipo: '',
-  decorrenza: '',
-  importo_rata: 0,
-  gestione: '',
-  erogato: '',
-  istituto: '',
-  durata_rate: 0,
-  tan: '',
-  estingue: true,
-  perc_mediazione: 0
-})
-function showSidebarAltriImpegni(event) {
-  sidebarAltriImpegniVisible.value = true
-  sidebarAltriImpegniData.value = { ...event }
+const loading = ref(false)
+
+function aggiornaNotaPratica() {
+  loading.value = true
+  const service = new AxiosService('Pratiche/AggiornaNotaPratica/' + route.params.idPratica)
+  service.create({ appunti: pratica.value.NotaGenerale })
+    .then(res => {
+      console.log(res)
+    })
+    .finally(() => {
+      loading.value = false
+      getData()
+    })
 }
 
-const appunti = ref('')
+
+getData()
 </script>

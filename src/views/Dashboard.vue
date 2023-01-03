@@ -1,108 +1,103 @@
 <template>
   <div class="wrapper">
-    <h1>Dashboard</h1>
+    <h3 class="pl-4">Attività CRM</h3>
 
-    <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
+    <div class=" px-4 pb-5 md:px-6 lg:px-8">
       <div class="grid mb-2">
-        <div class="sm:col-12 md:col-4 lg:col-3">
+        <div class="sm:col-12 md:col-4 lg:col-4">
           <div class="surface-card shadow-2 p-3 border-round">
             <div class="flex justify-content-between mb-3">
               <div>
-                <span class="block text-500 font-medium mb-3">Orders</span>
-                <div class="text-900 font-medium text-xl">152</div>
+                <span class="block text-500 font-medium mb-3">Lead da Lavorare</span>
+                <div v-if="loading" class="text-900 font-medium text-xl"><i class="pi pi-spin pi-spinner"></i></div>
+                <div v-else class="text-900 font-medium text-xl">{{ dashboardData.leadDaLavorare }}</div>
               </div>
               <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
                 style="width:2.5rem;height:2.5rem">
                 <i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
               </div>
             </div>
-            <span class="text-green-500 font-medium">24 new </span>
-            <span class="text-500">since last visit</span>
           </div>
         </div>
-        <div class="sm:col-12 md:col-4 lg:col-3">
+        <div class="sm:col-12 md:col-4 lg:col-4">
           <div class="surface-card shadow-2 p-3 border-round">
             <div class="flex justify-content-between mb-3">
               <div>
-                <span class="block text-500 font-medium mb-3">Revenue</span>
-                <div class="text-900 font-medium text-xl">$2.100</div>
+                <span class="block text-500 font-medium mb-3">Nuovi Lead</span>
+                <div v-if="loading" class="text-900 font-medium text-xl"><i class="pi pi-spin pi-spinner"></i></div>
+                <div v-else class="text-900 font-medium text-xl">{{ dashboardData.nuoviLead }}</div>
+              </div>
+              <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                style="width:2.5rem;height:2.5rem">
+                <i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sm:col-12 md:col-4 lg:col-4">
+          <div class="surface-200 shadow-2 p-3 border-round">
+            <div class="flex justify-content-between mb-3">
+              <div>
+                <span class="block text-500 font-medium mb-3 text-gray-400">Attività di oggi</span>
+                <div class="text-900 font-medium text-xl text-gray-400">0</div>
               </div>
               <div class="flex align-items-center justify-content-center bg-orange-100 border-round"
                 style="width:2.5rem;height:2.5rem">
                 <i class="pi pi-map-marker text-orange-500 text-xl"></i>
               </div>
             </div>
-            <span class="text-green-500 font-medium">%52+ </span>
-            <span class="text-500">since last week</span>
-          </div>
-        </div>
-        <div class="sm:col-12 md:col-4 lg:col-3">
-          <div class="surface-card shadow-2 p-3 border-round">
-            <div class="flex justify-content-between mb-3">
-              <div>
-                <span class="block text-500 font-medium mb-3">Customers</span>
-                <div class="text-900 font-medium text-xl">28441</div>
-              </div>
-              <div class="flex align-items-center justify-content-center bg-cyan-100 border-round"
-                style="width:2.5rem;height:2.5rem">
-                <i class="pi pi-inbox text-cyan-500 text-xl"></i>
-              </div>
-            </div>
-            <span class="text-green-500 font-medium">520 </span>
-            <span class="text-500">newly registered</span>
-          </div>
-        </div>
-        <div class="sm:col-12 md:col-4 lg:col-3">
-          <div class="surface-card shadow-2 p-3 border-round">
-            <div class="flex justify-content-between mb-3">
-              <div>
-                <span class="block text-500 font-medium mb-3">Comments</span>
-                <div class="text-900 font-medium text-xl">152 Unread</div>
-              </div>
-              <div class="flex align-items-center justify-content-center bg-purple-100 border-round"
-                style="width:2.5rem;height:2.5rem">
-                <i class="pi pi-comment text-purple-500 text-xl"></i>
-              </div>
-            </div>
-            <span class="text-green-500 font-medium">85 </span>
-            <span class="text-500">responded</span>
           </div>
         </div>
 
-        <div class="col">
+
+
+        <div class="col-12">
           <div class="surface-card shadow-2 p-3 border-round">
             <span class="block text-500 font-medium mb-3">Leads caldi</span>
-            <DataTable :value="hotLeads">
-              <Column field="nome" header="Nome"></Column>
-              <Column field="cognome" header="Cognome"></Column>
-              <Column field="email" header="Email"></Column>
-              <Column field="telefono" header="Tel"></Column>
+            <DataTable v-if="dashboardData.leadCaldi.length > 0" :loading="loading" :value="dashboardData.leadCaldi"
+              :paginator="true" :rows="5">
+              <Column field="actions" header="Azioni">
+
+                <template #body="{ data }">
+
+                  <i @click="gotoCrm(data)" class="pi pi-eye cursor-pointer"></i>
+                </template>
+
+              </Column>
+              <Column field="NOME" header="Nome"></Column>
+              <Column field="COGNOME" header="Cognome"></Column>
+              <Column field="ORIGINE" header="Origine"></Column>
+              <Column field="COMMERCIALE" header="Commerciale"></Column>
+              <Column field="GIORNI_INGRESSO_LEAD" header="Giorni ingresso lead"></Column>
             </DataTable>
           </div>
         </div>
-        <div class="sm:col-12 md:col-6 lg:col-4">
-          <div class="surface-card shadow-2 p-3 border-round grid-center">
-            <span class="block text-500 font-medium mb-3">Tachimetro</span>
-            <Knob v-model="knob" valueColor="#1e3181" rangeColor="#d5d51e" :size="200" />
+        <div class="mt-4 pt-2">
+          <h3 class="pl-2">Prestito SI - Notizie</h3>
+
+          <div>
+            <Card class="col-7 mb-4 ">
+              <template #content>
+                <h4>16 DICEMBRE 2022 - HOTEL
+                  ARISTON PAESTUM</h4>
+                <div class="grid">
+                  <div class="col-4">
+                    <img src="@/assets/images/psday.png" class="cursor-pointer" style="width:100%" />
+                  </div>
+                  <div class="col-8">
+                    <p>Ritorna, dopo tre anni di stop, l’appuntamento con il PrestitoSì Day! La convention nazionale di
+                      PrestitoSì, evento unico in Italia con tanto divertimento e un programma ricchissimo. Ricorre
+                      anche l’anniversario del 10° anno di attività della nostra Grande Famiglia PrestitoSì e siamo
+                      felici di festeggiare l’inizio di una nuova era per noi della Holding H2B e di tutto il Gruppo
+                      PrestitoSì Finance S.p.A.</p>
+                  </div>
+                </div>
+              </template>
+            </Card>
+
           </div>
         </div>
       </div>
-
-      <div class="grid mb-2">
-        <div class="sm:col-12 md:col-5">
-          <div class="card">
-            <h5 class="align-self-center mt-3">Grafico</h5>
-            <Chart type="bar" :data="stackedData" :options="stackedOptions" />
-          </div>
-        </div>
-        <div class="sm:col-12 md:col-7">
-          <div class="card p-2">
-            <h5 class="align-self-center mt-3">Grafico</h5>
-            <Chart type="line" :data="lineStylesData" :options="basicOptions" />
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 </template>
@@ -110,160 +105,47 @@
 <script setup>
 import { ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router';
+import AxiosService from '@/axiosServices/AxiosService';
 
+const router = useRouter()
 const store = useStore()
+
+const loading = ref(true)
 
 console.log('getter livelli login', store.getters["getLivelliLogin"])
 console.log('getter logget user', store.getters["loggedUser"])
 
-const knob = ref(30)
+function gotoCrm(data) {
+  router.push('/crm/' + data.id)
+}
 
-const hotLeads = ref([
-  {
-    nome: 'Mariano',
-    cognome: 'Poggi',
-    email: 'marianopoggi@gmail.com',
-    telefono: '3431231234'
-  },
-  {
-    nome: 'Andrea',
-    cognome: 'Fabbri',
-    email: 'andreafabbri@gmail.com',
-    telefono: '34312121212'
-  },
-  {
-    nome: 'Luciana',
-    cognome: 'Dossi',
-    email: 'lucianadossi@gmail.com',
-    telefono: '33323982938'
-  },
-  {
-    nome: 'Giulia',
-    cognome: 'Casadei',
-    email: 'giuliacasadei@gmail.com',
-    telefono: '3891230984'
+const dashboardData = ref({
+  nuoviLead: 0,
+  leadDaLavorare: 0,
+  leadCaldi: []
+})
+function getIndexes() {
+  dashboardData.value = {
+    nuoviLead: 0,
+    leadDaLavorare: 0,
+    leadCaldi: []
   }
-])
-
-const stackedOptions = ref(
-  {
-    indexAxis: 'y',
-    plugins: {
-      tooltip: {
-        mode: 'index',
-        intersect: false
-      },
-      legend: {
-        labels: {
-          color: '#495057'
-        }
-      }
-    },
-    scales: {
-      x: {
-        stacked: true,
-        ticks: {
-          color: '#495057'
-        },
-        grid: {
-          color: '#ebedef'
-        }
-      },
-      y: {
-        stacked: true,
-        ticks: {
-          color: '#495057'
-        },
-        grid: {
-          color: '#ebedef'
-        }
-      }
-    }
-  }
-);
-
-const stackedData = ref({
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-  datasets: [{
-    type: 'bar',
-    label: 'Dataset 1',
-    backgroundColor: '#42A5F5',
-    data: [50, 25, 12, 48, 90, 76, 42]
-  }, {
-    type: 'bar',
-    label: 'Dataset 2',
-    backgroundColor: '#66BB6A',
-    data: [21, 84, 24, 75, 37, 65, 34]
-  }, {
-    type: 'bar',
-    label: 'Dataset 3',
-    backgroundColor: '#FFA726',
-    data: [41, 52, 24, 74, 23, 21, 32]
-  }]
-});
+  loading.value = true
+  const service = new AxiosService('Dashboard/GetCRMDashboard')
+  service.read()
+    .then(res => {
+      console.log("🚀 ~ file: Dashboard.vue:181 ~ getIndexes ~ res", res)
+      dashboardData.value = res
+    })
+    .finally(() => {
+      loading.value = false
+    })
+}
 
 
-const lineStylesData = ref(
-  {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        label: 'First Dataset',
-        data: [65, 59, 80, 81, 56, 55, 40],
-        fill: false,
-        tension: .4,
-        borderColor: '#42A5F5'
-      },
-      {
-        label: 'Second Dataset',
-        data: [28, 48, 40, 19, 86, 27, 90],
-        fill: false,
-        borderDash: [5, 5],
-        tension: .4,
-        borderColor: '#66BB6A'
-      },
-      {
-        label: 'Third Dataset',
-        data: [12, 51, 62, 33, 21, 62, 45],
-        fill: true,
-        borderColor: '#FFA726',
-        tension: .4,
-        backgroundColor: 'rgba(255,167,38,0.2)'
-      }
-    ]
-  }
-)
+getIndexes()
 
-
-const basicOptions = ref(
-  {
-    plugins: {
-      legend: {
-        labels: {
-          color: '#495057'
-        }
-      }
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: '#495057'
-        },
-        grid: {
-          color: '#ebedef'
-        }
-      },
-      y: {
-        ticks: {
-          color: '#495057'
-        },
-        grid: {
-          color: '#ebedef'
-        }
-      }
-    }
-  }
-)
 </script>
 
 <style lang="scss" scoped>

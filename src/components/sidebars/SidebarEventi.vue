@@ -15,12 +15,13 @@
 
   <div class="flex flex-column justify-content-start w-full mb-4">
     <label>Data fine</label>
-    <Calendar dateFormat="dd-mm-yy" :showTime="true" :minDate="new Date()" v-model="tmpItem.end"></Calendar>
+    <Calendar dateFormat="dd-mm-yy" :showTime="true" :minDate="tmpItem.start" v-model="tmpItem.end"></Calendar>
   </div>
 
   <div class="flex flex-column justify-content-start-w-full mb-4">
     <label>Partecipanti</label>
-    <MultiSelect :options="props.sidebarData.userOptions" optionLabel="text" optionValue="value" v-model="partecipanti">
+    <MultiSelect :filter="true" :options="props.sidebarData.userOptions" optionLabel="text" optionValue="value"
+      v-model="partecipanti">
     </MultiSelect>
   </div>
 
@@ -30,7 +31,7 @@
   </div>
 
   <div class="flex justify-content end">
-    <Button label="Salva" @click="save"></Button>
+    <Button :loading="loading" label="Salva" @click="save"></Button>
   </div>
 
 
@@ -39,9 +40,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import AxiosService from '@/axiosServices/AxiosService';
 import { useToast } from "primevue/usetoast";
+import { useStore } from 'vuex';
+
+const store = useStore()
+const loading = ref(false)
 const toast = useToast()
 // eslint-disable-next-line no-undef
 const emit = defineEmits(['event_refreshEvents'])
@@ -49,10 +54,21 @@ const emit = defineEmits(['event_refreshEvents'])
 // eslint-disable-next-line no-undef, no-unused-vars
 const props = defineProps({
   sidebarVisible: Boolean,
-  sidebarData: Object
+  sidebarData: Object,
+
 })
 
+function checkSidebarData() {
+  if (props.sidebarData.nome && props.sidebarData.cognome) {
+    tmpItem.value.title = props.sidebarData.nome + ' ' + props.sidebarData.cognome
+    partecipanti.value.push(store.getters.loggedUser.id)
+  }
 
+}
+
+onMounted(() => {
+  checkSidebarData()
+})
 
 // //GET SIDEBARDATA
 // function setupSidebar() {
@@ -73,18 +89,18 @@ const partecipanti = ref([])
 const servicePOST = new AxiosService('Calendar/AddEvent')
 const servicePUT = new AxiosService('Calendar/UpdateEvent')
 function save() {
-
+  loading.value = true
 
   partecipanti.value.forEach(partecipante => {
     tmpItem.value.partecipanti.push({
-      id_partecipente: partecipante
+      id_utente: partecipante
     })
   })
 
   if (tmpItem.value.id) {
     servicePUT.updateCustomEndpoint('Calendar/UpdateEvent', tmpItem.value)
       .then(() => {
-        emit('event_refreshEvents')
+
         toast.add(
           {
             severity: 'success',
@@ -105,7 +121,14 @@ function save() {
           }
         );
       })
+      .finally(() => {
+        loading.value = false
+        emit('event_refreshEvents')
+      })
   } else {
+    if (props.sidebarData.id) {
+      tmpItem.value.id_anagrafica = props.sidebarData.id
+    }
     servicePOST.create(tmpItem.value)
       .then(() => {
         emit('event_refreshEvents')
@@ -127,6 +150,10 @@ function save() {
             life: 3000
           }
         );
+      })
+      .finally(() => {
+        loading.value = false
+        emit('event_refreshEvents')
       })
   }
 }

@@ -12,7 +12,8 @@
 
     <div class="flex flex-column col-12">
       <label>Categoria</label>
-      <Dropdown v-model="tempItem.categoria" :options="categoriaOptions" optionValue="value" optionLabel="text">
+      <Dropdown :filter="true" v-model="tempItem.categoria" :options="categoriaOptions" optionValue="value"
+        optionLabel="text">
       </Dropdown>
     </div>
 

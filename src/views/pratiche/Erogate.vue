@@ -1,58 +1,37 @@
 <template>
   <div class="wrapper">
     <h1>{{
-        pageTitle
-    }}</h1>
+    pageTitle
+}}</h1>
     <TableBuilder @event_ShowSidebar_nuovoAppuntamento="$router.push('/eventi')" @event_ShowSidebar_creaPratica="null"
-      @event_ShowSidebar_elimina="null" :data="tableItems" :headersConfig="columns" :showAzioni="false"
-      :config="config">
+      @event_ShowSidebar_eye="apriDettaglioPratica(event)" @event_ShowSidebar_elimina="null" :data="tableItems"
+      :headersConfig="columns" :showAzioni="true" :config="config">
     </TableBuilder>
-
-
-
-
 
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import AxiosService from '@/axiosServices/AxiosService';
 
 // IMPORT COMPONENTS
 import TableBuilder from '../../components/TableBuilder.vue'
 
 
-// id, 
-// nome cliente, 
-// nome agente, 
-// data inserimento, 
-// importo richiesto, 
-// durata, 
-// ultimo stato, 
-// data ultimo stato
-
 const columns = [
-  { field: 'nome_cliente', header: "Nome Cliente", visible: true, type: 'String', order: 1, frozen: true, sortable: true },
-  { field: 'nome_agente', header: "Nome Agente", visible: true, type: 'String', order: 2, frozen: false, sortable: false },
-  { field: 'data_inserimento', header: "Data Inserimento", visible: true, type: 'Date', order: 3, frozen: false, sortable: false },
-  { field: 'importo_richiesto', header: "Importo Richiesto", visible: true, type: 'Number', order: 4, frozen: false, sortable: false },
+  { field: 'Cliente', header: "Nome Cliente", visible: true, type: 'String', order: 1, frozen: true, sortable: true },
+  { field: 'Agente', header: "Nome Agente", visible: true, type: 'String', order: 2, frozen: false, sortable: false },
+  { field: 'dataInserimento', header: "Data Inserimento", visible: true, type: 'Date', order: 3, frozen: false, sortable: false },
+  { field: 'importo', header: "Importo Richiesto", visible: true, type: 'Number', order: 4, frozen: false, sortable: false },
+  { field: 'importoRata', header: "Importo Rata", visible: true, type: 'Number', order: 4, frozen: false, sortable: false },
+  { field: 'istitutoFinanziatore', header: "Istituto Finanziatore", visible: true, type: 'String', order: 4, frozen: false, sortable: false },
+  { field: 'TipoProdotto', header: "Tipo Prodotto", visible: true, type: 'String', order: 4, frozen: false, sortable: false },
   { field: 'durata', header: "Durata", visible: true, type: 'Number', order: 5, frozen: false, sortable: false },
-  { field: 'ultimo_stato', header: "Ultimo Stato", visible: true, type: 'String', order: 6, frozen: false, sortable: false },
-  { field: 'data_ultimo_stato', header: "Data Ultimo Stato", visible: true, type: 'Date', order: 7, frozen: false, sortable: false },
+  { field: 'Stato', header: "Ultimo Stato", visible: true, type: 'String', order: 6, frozen: false, sortable: false },
 ]
 
-const tableItems = [
-  {
-    id: 0,
-    nome_cliente: 'Mario Rossi',
-    nome_agente: 'Emmanuele Durante',
-    data_inserimento: new Date(),
-    importo_richiesto: 10000,
-    durata: 3,
-    ultimo_stato: 'in lavorazione',
-    data_ultimo_stato: new Date()
-  }
-]
+const tableItems = ref([])
 
 
 // TABLE BUILDER
@@ -79,6 +58,18 @@ const config = ref({
 
 let pageTitle = ref('Erogate')
 
+function getData() {
+  const service = new AxiosService('Pratiche/GetPraticheErogate')
+  service.create({})
+    .then(res => {
+      tableItems.value = res
+    })
+}
+
+function apriDettaglioPratica(event) {
+  console.log(event)
+}
 
 
+getData()
 </script>

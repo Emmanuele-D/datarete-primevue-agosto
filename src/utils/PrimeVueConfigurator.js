@@ -185,7 +185,7 @@ class PrimeVueConfigurator {
         weekHeader: "Sett.",
         firstDayOfWeek: 0,
         dateFormat: "dd/mm/yy",
-        weak: "Settimana",
+        weak: "Debole",
         medium: "Medio",
         strong: "Forte",
         passwordPrompt: "Inserisci la Password",

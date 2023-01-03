@@ -21,7 +21,8 @@
 
   <div class="flex flex-column col-12">
     <label>Stato</label>
-    <Dropdown :options="statoOptions" v-model="tmpItem.stato" optionLabel="text" optionValue="value"></Dropdown>
+    <Dropdown :filter="true" :options="statoOptions" v-model="tmpItem.stato" optionLabel="text" optionValue="value">
+    </Dropdown>
   </div>
 
   <div class="w-100 flex justify-content-end align-items-end col-12 col-md-2 mt-4">
